@@ -1,0 +1,18 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Tema oscuro. Mismas claves que Claro.xaml. -->
+    <SolidColorBrush x:Key="Fondo" Color="#1B2340"/>
+    <SolidColorBrush x:Key="Texto" Color="#E9E6DC"/>
+    <SolidColorBrush x:Key="TextoSecundario" Color="#A9B0C7"/>
+    <SolidColorBrush x:Key="Separador" Color="#3A4468"/>
+    <SolidColorBrush x:Key="BordeCampo" Color="#8C94B0"/>
+    <SolidColorBrush x:Key="CampoFondo" Color="#141A31"/>
+    <SolidColorBrush x:Key="Acento" Color="#F0B85A"/>
+    <SolidColorBrush x:Key="FondoPrimario" Color="#F0B85A"/>
+    <SolidColorBrush x:Key="TextoPrimario" Color="#1A1405"/>
+    <SolidColorBrush x:Key="Foco" Color="#F0B85A"/>
+    <SolidColorBrush x:Key="Error" Color="#FF9A8B"/>
+    <SolidColorBrush x:Key="Exito" Color="#8FD6A5"/>
+    <SolidColorBrush x:Key="AvisoFondo" Color="#3A3322"/>
+    <SolidColorBrush x:Key="Halo" Color="#F0B85A"/>
+</ResourceDictionary>

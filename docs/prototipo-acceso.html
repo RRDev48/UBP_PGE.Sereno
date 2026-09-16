@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sereno — Prototipos de acceso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#DCE0EA; --win:#F6F7FA; --ink:#1B2340; --muted:#4A5270; --line:#B9BFD0;
+  --lamp:#8A5300; --lamp-bg:#1B2340; --lamp-ink:#F6F7FA;
+  --field:#FFFFFF; --err:#A1261B; --ok:#1E6B3A; --title:#E9ECF3;
+  --focus:#8A5300; --glow:rgba(240,184,90,.28);
+  --sans:"Atkinson Hyperlegible","Segoe UI Variable","Segoe UI",system-ui,sans-serif;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --desk:#0F1426; --win:#1B2340; --ink:#E9E6DC; --muted:#A9B0C7; --line:#3A4468;
+    --lamp:#F0B85A; --lamp-bg:#F0B85A; --lamp-ink:#1A1405;
+    --field:#141A31; --err:#FF9A8B; --ok:#8FD6A5; --title:#232C4F;
+    --focus:#F0B85A; --glow:rgba(240,184,90,.22);
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#0F1426; --win:#1B2340; --ink:#E9E6DC; --muted:#A9B0C7; --line:#3A4468;
+  --lamp:#F0B85A; --lamp-bg:#F0B85A; --lamp-ink:#1A1405;
+  --field:#141A31; --err:#FF9A8B; --ok:#8FD6A5; --title:#232C4F;
+  --focus:#F0B85A; --glow:rgba(240,184,90,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--desk);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;min-height:100vh}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Barra de la maqueta */
+.bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--line)}
+.bar h1{font-family:var(--serif);font-weight:600;font-size:1.25rem;margin:0}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;border:1px solid var(--line);border-radius:10px;padding:4px}
+.tabs button{min-height:44px;padding:0 14px;border:0;border-radius:7px;background:transparent;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--lamp-bg);color:var(--lamp-ink);font-weight:700}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:transparent;cursor:pointer}
+.opt[aria-pressed="true"]{border-color:var(--lamp);box-shadow:inset 0 0 0 1px var(--lamp)}
+
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;padding:32px 24px;max-width:1200px;margin:0 auto;align-items:start}
+body.nonotes .stage{grid-template-columns:minmax(0,1fr)}
+body.nonotes .notes{display:none}
+@media (max-width:860px){.stage{grid-template-columns:minmax(0,1fr)}}
+.canvas{display:flex;justify-content:center;align-items:center;min-height:620px}
+
+/* Ventana Windows */
+.win{width:100%;max-width:460px;background:var(--win);border:1px solid var(--line);border-radius:10px;box-shadow:0 18px 50px rgba(15,20,38,.28);overflow:hidden}
+.win.splash{max-width:440px;border-radius:12px}
+.titlebar{display:flex;align-items:center;justify-content:space-between;height:36px;padding-left:12px;background:var(--title);font-size:.8rem;color:var(--muted)}
+.titlebar span{display:flex;gap:8px;align-items:center}
+.wc{display:flex}
+.wc i{width:46px;height:36px;display:grid;place-items:center;font-style:normal}
+.body{padding:28px 32px 24px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.brand b{font-family:var(--serif);font-weight:600;font-size:1.15rem}
+h2{font-family:var(--serif);font-weight:600;font-size:1.65rem;line-height:1.2;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 22px;max-width:36ch}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:700;margin-bottom:6px}
+.field .hint{display:block;color:var(--muted);font-size:.875rem;margin-top:4px}
+.inp{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:8px;background:var(--field)}
+.inp:focus-within{border-color:var(--focus);box-shadow:0 0 0 2px var(--focus)}
+.inp input{flex:1;min-width:0;min-height:44px;padding:0 12px;border:0;background:transparent;outline:none}
+.inp.bad{border-color:var(--err)}
+.eye{min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted)}
+.msg{display:none;gap:6px;align-items:flex-start;margin-top:6px;font-size:.9rem;color:var(--err)}
+.msg.on{display:flex}
+.msg.okm{color:var(--ok)}
+
+.meter{display:flex;gap:4px;margin-top:8px}
+.meter i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.meter i.f{background:var(--lamp)}
+
+.primary{width:100%;min-height:48px;border:0;border-radius:8px;background:var(--lamp-bg);color:var(--lamp-ink);font-weight:700;cursor:pointer;margin-top:6px}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.secondary{min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:8px;background:transparent;cursor:pointer}
+.links{display:flex;flex-direction:column;gap:2px;margin-top:14px}
+.link{min-height:44px;padding:0 4px;border:0;background:transparent;color:var(--lamp);text-decoration:underline;text-underline-offset:3px;cursor:pointer;text-align:left;align-self:flex-start}
+.privacy{display:flex;gap:10px;align-items:flex-start;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.875rem}
+
+.profile{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:18px}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--lamp-bg);color:var(--lamp-ink);font-weight:700;font-family:var(--serif);font-size:1.2rem}
+.profile div{flex:1}
+.profile small{display:block;color:var(--muted)}
+
+.steps{display:flex;gap:8px;margin:0 0 18px;padding:0;list-style:none;font-size:.85rem;color:var(--muted)}
+.steps li{display:flex;align-items:center;gap:6px}
+.steps li b{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.75rem}
+.steps li.cur{color:var(--ink);font-weight:700}
+.steps li.cur b{background:var(--lamp-bg);color:var(--lamp-ink);border-color:var(--lamp-bg)}
+.steps li.done b{border-color:var(--lamp)}
+
+.key{font-family:"Cascadia Mono",Consolas,monospace;font-size:1.25rem;letter-spacing:.06em;text-align:center;padding:16px;border:1.5px dashed var(--lamp);border-radius:8px;margin:4px 0 12px;word-break:break-all}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.check{display:flex;gap:10px;align-items:center;min-height:44px;cursor:pointer;margin-bottom:6px}
+.check input{width:22px;height:22px;accent-color:var(--lamp)}
+.callout{display:flex;gap:10px;padding:12px;border-left:4px solid var(--lamp);background:var(--glow);border-radius:0 8px 8px 0;font-size:.9rem;margin-bottom:16px}
+
+/* Splash */
+.splash .body{padding:48px 32px 28px;text-align:center;position:relative;overflow:hidden}
+.lantern{width:96px;height:96px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;position:relative}
+.lantern::before{content:"";position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,var(--glow) 0%,transparent 70%)}
+.anim .lantern::before{animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.15);opacity:.7}}
+.word{font-family:var(--serif);font-weight:400;font-size:3rem;letter-spacing:-.01em;margin:0;line-height:1}
+.tag{color:var(--muted);margin:10px 0 28px;font-style:italic;font-family:var(--serif)}
+.load{height:4px;background:var(--line);border-radius:2px;overflow:hidden;max-width:220px;margin:0 auto}
+.load i{display:block;height:100%;width:0;background:var(--lamp)}
+.status{font-size:.85rem;color:var(--muted);margin-top:10px;min-height:1.5em}
+.ver{position:absolute;bottom:10px;right:14px;font-size:.75rem;color:var(--muted)}
+
+/* Notas */
+.notes{border-left:3px solid var(--lamp);padding:4px 0 4px 18px}
+.notes h3{font-family:var(--serif);font-weight:600;font-size:1.15rem;margin:0 0 12px}
+.notes ul{margin:0;padding-left:18px}
+.notes li{margin-bottom:10px;font-size:.92rem}
+.notes li strong{display:block}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--win);padding:12px 18px;border-radius:8px;display:none;max-width:90vw}
+.toast.on{display:block}
+@media (prefers-reduced-motion:reduce){.anim .lantern::before{animation:none}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Sereno · prototipos de acceso</h1>
+  <div class="tabs" role="tablist" aria-label="Pantallas">
+    <button role="tab" data-go="splash">Splash</button>
+    <button role="tab" data-go="login">Iniciar sesión</button>
+    <button role="tab" data-go="register">Crear perfil</button>
+    <button role="tab" data-go="recover">Recuperar acceso</button>
+  </div>
+  <div class="opts">
+    <button class="opt" id="themeBtn" aria-pressed="false">Tema oscuro</button>
+    <button class="opt" id="lowBtn" aria-pressed="false">Bajo estímulo</button>
+    <button class="opt" id="notesBtn" aria-pressed="true">Notas de diseño</button>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="canvas" id="canvas"></div>
+  <aside class="notes" aria-labelledby="notesTitle">
+    <h3 id="notesTitle">Decisiones de esta pantalla</h3>
+    <ul id="notesList"></ul>
+  </aside>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const moon = (s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="currentColor" style="color:var(--lamp)"/></svg>`;
+const lock = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top:2px"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>`;
+const warn = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v6M12 16.5v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+const check = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+
+const titlebar = t => `<div class="titlebar" aria-hidden="true"><span>${moon(14)} ${t}</span><span class="wc"><i>─</i><i>▢</i><i>✕</i></span></div>`;
+const brand = `<div class="brand">${moon()}<b>Sereno</b></div>`;
+const privacy = `<p class="privacy">${lock}<span>Tu perfil y tu historial se guardan solo en esta computadora. Sereno no se conecta a internet.</span></p>`;
+const pwField = (id,label,hint='',auto='current-password') => `
+  <div class="field">
+    <label for="${id}">${label}</label>
+    <div class="inp" id="${id}-box">
+      <input id="${id}" type="password" autocomplete="${auto}" aria-describedby="${id}-hint ${id}-msg">
+      <button class="eye" type="button" data-eye="${id}" aria-label="Mostrar ${label.toLowerCase()}" aria-pressed="false">👁</button>
+    </div>
+    <span class="hint" id="${id}-hint">${hint}</span>
+    <div class="msg" id="${id}-msg" role="alert"></div>
+  </div>`;
+const textField = (id,label,hint='',extra='') => `
+  <div class="field">
+    <label for="${id}">${label}</label>
+    <div class="inp" id="${id}-box"><input id="${id}" ${extra} aria-describedby="${id}-hint ${id}-msg"></div>
+    <span class="hint" id="${id}-hint">${hint}</span>
+    <div class="msg" id="${id}-msg" role="alert"></div>
+  </div>`;
+const steps = (labels,cur) => `<ol class="steps" aria-label="Progreso">${labels.map((l,i)=>`<li class="${i===cur?'cur':i<cur?'done':''}" ${i===cur?'aria-current="step"':''}><b>${i<cur?'✓':i+1}</b>${l}</li>`).join('')}</ol>`;
+
+const state = {profile:'Rodrigo', password:'sereno123', key:'', fails:0, regStep:0, recStep:0};
+const genKey = () => Array.from({length:4},()=>Math.random().toString(36).slice(2,6).toUpperCase().padEnd(4,'X')).join('-');
+
+const notes = {
+  splash:[
+    ['Dura menos de 2 segundos','Coincide con el requisito no funcional de arranque. Después pasa sola al acceso o directo a la bandeja si no hay perfil con contraseña.'],
+    ['El farol como marca','El sereno recorría la noche con un farol. El halo ámbar es el único elemento decorativo de todo el flujo.'],
+    ['Bajo estímulo','Con el modo activo el halo queda quieto y la barra se completa sin transición.'],
+    ['Estado anunciado','El texto de carga vive en una región aria-live para que el lector de pantalla lo lea.']
+  ],
+  login:[
+    ['Perfil local, no cuenta','No hay email ni servidor: el perfil existe solo en %APPDATA%\\Sereno\\. Respeta el pilar de privacidad.'],
+    ['Usar sin perfil','Queda visible como opción de primer nivel: la contraseña es opcional, no una barrera (pilar Autonomía).'],
+    ['Errores sin depender del color','Cada error suma ícono, texto y borde. Después de 3 intentos se ofrece recuperar el acceso.'],
+    ['Probar el flujo','Contraseña de prueba: sereno123.'],
+    ['Objetivos táctiles','Botones y el ojo de mostrar contraseña miden al menos 44 × 44 px.']
+  ],
+  register:[
+    ['Dos pasos','1) nombre y contraseña, 2) clave de recuperación. No se puede avanzar sin confirmar que se guardó la clave.'],
+    ['Clave de recuperación en lugar de email','Como nada sale de la máquina, la única forma de recuperar es una clave que la persona guarda.'],
+    ['Fuerza con texto','El medidor dice "débil / aceptable / fuerte" en palabras, no solo con segmentos de color.'],
+    ['Sin lenguaje evaluativo','Los mensajes describen qué falta, no califican a la persona.']
+  ],
+  recover:[
+    ['Tres pasos','Clave → nueva contraseña → listo. El progreso se indica con número y texto.'],
+    ['Formato automático','La clave se agrupa de a 4 caracteres mientras se escribe y acepta minúsculas.'],
+    ['Honestidad','Se aclara que sin la clave no hay forma de recuperar: no existe una copia en ningún servidor.'],
+    ['Probar el flujo','Usá la clave que se generó en "Crear perfil" o cualquier clave con formato XXXX-XXXX-XXXX-XXXX.']
+  ]
+};
+
+const screens = {
+  splash(){
+    return `<div class="win splash">${titlebar('Sereno')}
+      <div class="body">
+        <div class="lantern">${moon(56)}</div>
+        <p class="word">Sereno</p>
+        <p class="tag">Avisa, no interrumpe.</p>
+        <div class="load" role="progressbar" aria-label="Cargando" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="loadBar"></i></div>
+        <p class="status" id="splashStatus" aria-live="polite">Preparando tus pausas…</p>
+        <button class="secondary" id="replay" style="margin-top:8px">Ver de nuevo</button>
+        <span class="ver">v0.1 · Sprint 0</span>
+      </div></div>`;
+  },
+  login(){
+    return `<div class="win">${titlebar('Sereno · Iniciar sesión')}
+      <form class="body" id="loginForm" novalidate>
+        ${brand}
+        <h2>Hola de nuevo</h2>
+        <p class="lead">Ingresá tu contraseña para abrir tu perfil y tu historial.</p>
+        <div class="profile">
+          <span class="avatar" aria-hidden="true">${state.profile[0].toUpperCase()}</span>
+          <div><strong>${state.profile}</strong><small>Perfil en esta computadora</small></div>
+        </div>
+        ${pwField('lpw','Contraseña')}
+        <label class="check"><input type="checkbox" id="remember"> Abrir sin pedir contraseña en esta computadora</label>
+        <button class="primary" type="submit">Iniciar sesión</button>
+        <div class="links">
+          <button class="link" type="button" data-go="recover">Olvidé mi contraseña</button>
+          <button class="link" type="button" data-go="register">Crear otro perfil</button>
+          <button class="link" type="button" id="guest">Usar Sereno sin perfil</button>
+        </div>
+        ${privacy}
+      </form></div>`;
+  },
+  register(){
+    if(state.regStep===0) return `<div class="win">${titlebar('Sereno · Crear perfil')}
+      <form class="body" id="regForm" novalidate>
+        ${brand}
+        ${steps(['Tus datos','Clave de recuperación'],0)}
+        <h2>Creá tu perfil</h2>
+        <p class="lead">Sirve para separar tu historial si varias personas usan esta computadora.</p>
+        ${textField('rname','Nombre para mostrar','Puede ser un apodo. Solo se ve en esta pantalla.','type="text" autocomplete="nickname"')}
+        ${pwField('rpw','Contraseña','Al menos 8 caracteres.','new-password')}
+        <div class="meter" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p class="hint" id="strength" aria-live="polite" style="color:var(--muted);font-size:.875rem;margin:4px 0 12px">Fuerza: sin completar</p>
+        ${pwField('rpw2','Repetir contraseña','','new-password')}
+        <button class="primary" type="submit">Continuar</button>
+        <div class="links"><button class="link" type="button" data-go="login">Ya tengo un perfil</button></div>
+        ${privacy}
+      </form></div>`;
+    return `<div class="win">${titlebar('Sereno · Crear perfil')}
+      <div class="body">
+        ${brand}
+        ${steps(['Tus datos','Clave de recuperación'],1)}
+        <h2>Guardá tu clave de recuperación</h2>
+        <p class="lead">Es la única forma de volver a entrar si olvidás la contraseña.</p>
+        <div class="key" id="keyBox" aria-label="Clave de recuperación">${state.key}</div>
+        <div class="row">
+          <button class="secondary" type="button" id="copyKey">Copiar clave</button>
+          <button class="secondary" type="button" id="saveKey">Guardar como archivo</button>
+        </div>
+        <div class="callout">${warn}<span>Sereno no guarda una copia fuera de esta computadora. Si perdés la clave y la contraseña, el perfil no se puede abrir.</span></div>
+        <label class="check"><input type="checkbox" id="saved"> Guardé la clave en un lugar seguro</label>
+        <button class="primary" id="finishReg" disabled>Empezar a usar Sereno</button>
+      </div></div>`;
+  },
+  recover(){
+    const lbl=['Clave','Nueva contraseña','Listo'];
+    if(state.recStep===0) return `<div class="win">${titlebar('Sereno · Recuperar acceso')}
+      <form class="body" id="recForm1" novalidate>
+        ${brand}${steps(lbl,0)}
+        <h2>Recuperá tu acceso</h2>
+        <p class="lead">Escribí la clave de recuperación que guardaste al crear el perfil.</p>
+        ${textField('rkey','Clave de recuperación','Formato: XXXX-XXXX-XXXX-XXXX','type="text" autocomplete="off" spellcheck="false" maxlength="19" style="font-family:Consolas,monospace;letter-spacing:.05em"')}
+        <button class="primary" type="submit">Verificar clave</button>
+        <div class="links"><button class="link" type="button" data-go="login">Volver a iniciar sesión</button></div>
+        <p class="privacy">${lock}<span>No hay recuperación por email: Sereno no guarda tus datos en ningún servidor.</span></p>
+      </form></div>`;
+    if(state.recStep===1) return `<div class="win">${titlebar('Sereno · Recuperar acceso')}
+      <form class="body" id="recForm2" novalidate>
+        ${brand}${steps(lbl,1)}
+        <h2>Elegí una contraseña nueva</h2>
+        <p class="lead">Tu historial y tu configuración se mantienen.</p>
+        ${pwField('npw','Nueva contraseña','Al menos 8 caracteres.','new-password')}
+        ${pwField('npw2','Repetir contraseña','','new-password')}
+        <button class="primary" type="submit">Guardar contraseña</button>
+        <div class="links"><button class="link" type="button" id="backRec">Usar otra clave</button></div>
+      </form></div>`;
+    return `<div class="win">${titlebar('Sereno · Recuperar acceso')}
+      <div class="body">
+        ${brand}${steps(lbl,2)}
+        <h2>Contraseña guardada</h2>
+        <p class="lead">Ya podés iniciar sesión con tu contraseña nueva. Tu clave de recuperación sigue siendo la misma.</p>
+        <div class="msg on okm" role="status">${check}<span>El perfil de ${state.profile} está listo.</span></div>
+        <button class="primary" data-go="login" style="margin-top:18px">Iniciar sesión</button>
+      </div></div>`;
+  }
+};
+
+const $ = s => document.querySelector(s);
+let current='splash', splashTimer=null;
+const low = () => document.body.classList.contains('low');
+
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),3200);}
+function setErr(id,text){
+  const box=$('#'+id+'-box'),m=$('#'+id+'-msg');
+  if(!m)return;
+  if(text){m.innerHTML=warn+'<span>'+text+'</span>';m.classList.add('on');box.classList.add('bad');$('#'+id).setAttribute('aria-invalid','true');}
+  else{m.classList.remove('on');m.innerHTML='';box.classList.remove('bad');$('#'+id).removeAttribute('aria-invalid');}
+}
+function strength(v){let s=0;if(v.length>=8)s++;if(v.length>=12)s++;if(/[0-9]/.test(v)&&/[a-zA-Z]/.test(v))s++;if(/[^a-zA-Z0-9]/.test(v))s++;return Math.min(3,Math.ceil(s*3/4));}
+
+function go(name){
+  current=name; clearInterval(splashTimer);
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.go===name));
+  $('#canvas').innerHTML=screens[name]();
+  $('#notesList').innerHTML=notes[name].map(([t,d])=>`<li><strong>${t}</strong>${d}</li>`).join('');
+  bind(name);
+}
+
+function runSplash(){
+  const bar=$('#loadBar'),st=$('#splashStatus'),pb=bar.parentElement;
+  const msgs=['Preparando tus pausas…','Cargando tu configuración…','Listo'];
+  if(low()){bar.style.width='100%';pb.setAttribute('aria-valuenow',100);st.textContent='Listo';return;}
+  $('.splash').classList.add('anim');
+  let p=0;bar.style.width='0';
+  splashTimer=setInterval(()=>{p+=5;bar.style.width=p+'%';pb.setAttribute('aria-valuenow',p);
+    st.textContent=msgs[p<50?0:p<100?1:2];
+    if(p>=100){clearInterval(splashTimer);setTimeout(()=>{if(current==='splash')go('login');},500);}
+  },90);
+}
+
+function bind(name){
+  document.querySelectorAll('[data-eye]').forEach(b=>b.onclick=()=>{
+    const i=$('#'+b.dataset.eye),show=i.type==='password';i.type=show?'text':'password';
+    b.setAttribute('aria-pressed',show);b.textContent=show?'🙈':'👁';
+    b.setAttribute('aria-label',(show?'Ocultar ':'Mostrar ')+b.getAttribute('aria-label').replace(/^(Mostrar|Ocultar) /,''));
+  });
+  document.querySelectorAll('#canvas [data-go]').forEach(b=>b.onclick=()=>{state.regStep=0;state.recStep=0;go(b.dataset.go);});
+
+  if(name==='splash'){runSplash();$('#replay').onclick=()=>go('splash');}
+
+  if(name==='login'){
+    $('#loginForm').onsubmit=e=>{e.preventDefault();
+      const v=$('#lpw').value;
+      if(!v){setErr('lpw','Escribí tu contraseña para continuar.');return $('#lpw').focus();}
+      if(v!==state.password){state.fails++;
+        setErr('lpw',state.fails>=3?'La contraseña no coincide. Si no la recordás, usá "Olvidé mi contraseña".':'La contraseña no coincide. Revisá mayúsculas y probá de nuevo.');
+        return $('#lpw').select();}
+      state.fails=0;setErr('lpw');toast('Sesión iniciada. Sereno queda en la bandeja del sistema.');
+    };
+    $('#lpw').oninput=()=>setErr('lpw');
+    $('#guest').onclick=()=>toast('Sereno se abre sin perfil. El historial queda en el perfil compartido de esta computadora.');
+  }
+
+  if(name==='register'&&state.regStep===0){
+    const pw=$('#rpw'),bars=document.querySelectorAll('.meter i'),lab=['sin completar','débil','aceptable','fuerte'];
+    pw.oninput=()=>{const s=pw.value?strength(pw.value)||1:0;bars.forEach((b,i)=>b.classList.toggle('f',i<s));$('#strength').textContent='Fuerza: '+lab[s];setErr('rpw');};
+    $('#rname').oninput=()=>setErr('rname');$('#rpw2').oninput=()=>setErr('rpw2');
+    $('#regForm').onsubmit=e=>{e.preventDefault();let first=null;
+      const n=$('#rname').value.trim(),a=pw.value,b=$('#rpw2').value;
+      if(!n){setErr('rname','Escribí un nombre para identificar el perfil.');first=first||'rname';}
+      if(a.length<8){setErr('rpw','Faltan '+(8-a.length)+' caracteres para llegar a 8.');first=first||'rpw';}
+      if(!b||a!==b){setErr('rpw2','Las dos contraseñas tienen que ser iguales.');first=first||'rpw2';}
+      if(first)return $('#'+first).focus();
+      state.profile=n;state.password=a;state.key=genKey();state.regStep=1;go('register');$('#keyBox').focus?.();
+    };
+  }
+  if(name==='register'&&state.regStep===1){
+    $('#saved').onchange=e=>$('#finishReg').disabled=!e.target.checked;
+    $('#copyKey').onclick=async()=>{try{await navigator.clipboard.writeText(state.key);toast('Clave copiada al portapapeles.');}catch(_){toast('En la app real, la clave se copia al portapapeles.');}};
+    $('#saveKey').onclick=()=>toast('En la app real se abre "Guardar como" con sereno-clave.txt.');
+    $('#finishReg').onclick=()=>{state.regStep=0;toast('Perfil creado. Sereno queda en la bandeja del sistema.');go('login');};
+  }
+
+  if(name==='recover'&&state.recStep===0){
+    const k=$('#rkey');
+    k.oninput=()=>{const raw=k.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,16);k.value=raw.match(/.{1,4}/g)?.join('-')||'';setErr('rkey');};
+    $('#recForm1').onsubmit=e=>{e.preventDefault();
+      const v=k.value;
+      if(!v){setErr('rkey','Escribí tu clave de recuperación.');return k.focus();}
+      if(v.length<19){setErr('rkey','La clave tiene 16 caracteres; faltan '+(16-v.replace(/-/g,'').length)+'.');return k.focus();}
+      if(state.key&&v!==state.key){setErr('rkey','Esta clave no corresponde al perfil de '+state.profile+'.');return k.focus();}
+      state.recStep=1;go('recover');$('#npw').focus();
+    };
+  }
+  if(name==='recover'&&state.recStep===1){
+    $('#npw').oninput=()=>setErr('npw');$('#npw2').oninput=()=>setErr('npw2');
+    $('#backRec').onclick=()=>{state.recStep=0;go('recover');};
+    $('#recForm2').onsubmit=e=>{e.preventDefault();
+      const a=$('#npw').value,b=$('#npw2').value;let first=null;
+      if(a.length<8){setErr('npw','Faltan '+(8-a.length)+' caracteres para llegar a 8.');first='npw';}
+      if(!b||a!==b){setErr('npw2','Las dos contraseñas tienen que ser iguales.');first=first||'npw2';}
+      if(first)return $('#'+first).focus();
+      state.password=a;state.recStep=2;go('recover');
+    };
+  }
+}
+
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{state.regStep=0;state.recStep=0;go(b.dataset.go);});
+const root=document.documentElement;
+const isDark=()=>root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+function syncTheme(){$('#themeBtn').setAttribute('aria-pressed',isDark());}
+$('#themeBtn').onclick=()=>{const d=!isDark();root.dataset.theme=d?'dark':'light';try{localStorage.setItem('sereno-theme',root.dataset.theme)}catch(_){}syncTheme();};
+$('#lowBtn').onclick=e=>{const on=document.body.classList.toggle('low');e.currentTarget.setAttribute('aria-pressed',on);if(current==='splash')go('splash');};
+$('#notesBtn').onclick=e=>{const hide=document.body.classList.toggle('nonotes');e.currentTarget.setAttribute('aria-pressed',!hide);};
+try{const t=localStorage.getItem('sereno-theme');if(t)root.dataset.theme=t;}catch(_){}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.body.classList.add('low');$('#lowBtn').setAttribute('aria-pressed','true');}
+syncTheme();
+go('splash');
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Tema claro. Contrastes verificados contra el fondo: texto 13:1, secundario 7:1, acento 5.6:1. -->
+    <SolidColorBrush x:Key="Fondo" Color="#F6F7FA"/>
+    <SolidColorBrush x:Key="Texto" Color="#1B2340"/>
+    <SolidColorBrush x:Key="TextoSecundario" Color="#4A5270"/>
+    <SolidColorBrush x:Key="Separador" Color="#D5D9E3"/>
+    <SolidColorBrush x:Key="BordeCampo" Color="#6B7390"/>
+    <SolidColorBrush x:Key="CampoFondo" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Acento" Color="#8A5300"/>
+    <SolidColorBrush x:Key="FondoPrimario" Color="#1B2340"/>
+    <SolidColorBrush x:Key="TextoPrimario" Color="#F6F7FA"/>
+    <SolidColorBrush x:Key="Foco" Color="#8A5300"/>
+    <SolidColorBrush x:Key="Error" Color="#A1261B"/>
+    <SolidColorBrush x:Key="Exito" Color="#1E6B3A"/>
+    <SolidColorBrush x:Key="AvisoFondo" Color="#FBEBD0"/>
+    <SolidColorBrush x:Key="Halo" Color="#F0B85A"/>
+</ResourceDictionary>

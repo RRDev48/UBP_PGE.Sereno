@@ -1,0 +1,99 @@
+<Window x:Class="Sereno.Vistas.RegistroWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Sereno.Controles"
+        Title="Sereno · Crear perfil" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
+        Icon="/Recursos/sereno.ico">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel Margin="32,28,32,24">
+            <c:Marca/>
+            <c:IndicadorPasos x:Name="Pasos"/>
+
+            <!-- Paso 1: datos del perfil -->
+            <StackPanel x:Name="Paso1">
+                <TextBlock Style="{StaticResource Titulo}" Text="Creá tu perfil"/>
+                <TextBlock Style="{StaticResource Bajada}"
+                           Text="Sirve para separar tu historial si varias personas usan esta computadora."/>
+
+                <c:CampoTexto x:Name="Nombre" Etiqueta="Nombre para mostrar" LongitudMaxima="40"
+                              Ayuda="Puede ser un apodo. Solo se ve en esta computadora."/>
+
+                <c:CampoContrasena x:Name="Contrasena" Etiqueta="Contraseña" Ayuda="Al menos 8 caracteres."
+                                   Margin="0,0,0,4"/>
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle x:Name="Segmento1" Height="6" RadiusX="3" RadiusY="3" Margin="0,0,3,0"
+                               Fill="{DynamicResource Separador}"/>
+                    <Rectangle x:Name="Segmento2" Grid.Column="1" Height="6" RadiusX="3" RadiusY="3" Margin="3,0"
+                               Fill="{DynamicResource Separador}"/>
+                    <Rectangle x:Name="Segmento3" Grid.Column="2" Height="6" RadiusX="3" RadiusY="3" Margin="3,0,0,0"
+                               Fill="{DynamicResource Separador}"/>
+                </Grid>
+                <TextBlock x:Name="FuerzaTexto" Style="{StaticResource Ayuda}" Margin="0,4,0,14"
+                           Text="Fuerza: sin completar" AutomationProperties.LiveSetting="Polite"/>
+
+                <c:CampoContrasena x:Name="Repetir" Etiqueta="Repetir contraseña"/>
+
+                <Button x:Name="Continuar" Style="{StaticResource BotonPrimario}" Content="Continuar"
+                        IsDefault="True" Margin="0,4,0,0" Click="Continuar_Click"/>
+
+                <StackPanel Margin="0,12,0,0">
+                    <Button x:Name="YaTengoPerfil" Style="{StaticResource BotonEnlace}" Content="Ya tengo un perfil"
+                            Click="Volver_Click"/>
+                    <Button x:Name="UsarSinPerfil" Style="{StaticResource BotonEnlace}" Content="Usar Sereno sin perfil"
+                            Click="SinPerfil_Click"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Paso 2: clave de recuperación -->
+            <StackPanel x:Name="Paso2" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource Titulo}" Text="Guardá tu clave de recuperación"/>
+                <TextBlock Style="{StaticResource Bajada}"
+                           Text="Es la única forma de volver a entrar si olvidás la contraseña."/>
+
+                <Grid Margin="0,0,0,12">
+                    <Rectangle Stroke="{DynamicResource Acento}" StrokeThickness="1.5" StrokeDashArray="4 3"
+                               RadiusX="8" RadiusY="8"/>
+                    <TextBox x:Name="ClaveTexto" Style="{StaticResource CajaTextoInterna}" IsReadOnly="True"
+                             FontFamily="{StaticResource FuenteMono}" FontSize="22" TextAlignment="Center"
+                             Margin="12,10" AutomationProperties.Name="Clave de recuperación"/>
+                </Grid>
+
+                <WrapPanel Margin="0,0,0,6">
+                    <Button x:Name="CopiarClave" Style="{StaticResource BotonSecundario}" Content="Copiar clave"
+                            Margin="0,0,8,8" Click="CopiarClave_Click"/>
+                    <Button x:Name="GuardarClave" Style="{StaticResource BotonSecundario}"
+                            Content="Guardar como archivo" Margin="0,0,8,8" Click="GuardarClave_Click"/>
+                </WrapPanel>
+
+                <TextBlock x:Name="EstadoClave" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
+                           Visibility="Collapsed" AutomationProperties.LiveSetting="Polite"/>
+                <Button x:Name="AbrirCarpeta" Style="{StaticResource BotonEnlace}" Content="Abrir la carpeta del perfil"
+                        Margin="0,-8,0,8" Visibility="Collapsed" Click="AbrirCarpeta_Click"/>
+
+                <Border Style="{StaticResource Aviso}">
+                    <DockPanel>
+                        <Path DockPanel.Dock="Left" Data="{StaticResource GeoAviso}" Width="18" Height="18"
+                              Stretch="Uniform" Stroke="{DynamicResource Texto}" StrokeThickness="2"
+                              VerticalAlignment="Top" Margin="0,1,10,0"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="14"
+                                   Text="Sereno no guarda una copia fuera de esta computadora. Si perdés la clave y la contraseña, el perfil no se puede abrir."/>
+                    </DockPanel>
+                </Border>
+
+                <CheckBox x:Name="ClaveGuardada" Checked="ClaveGuardada_Changed" Unchecked="ClaveGuardada_Changed">
+                    <TextBlock Text="Guardé la clave en un lugar seguro" TextWrapping="Wrap"/>
+                </CheckBox>
+
+                <Button x:Name="Empezar" Style="{StaticResource BotonPrimario}" Content="Empezar a usar Sereno"
+                        IsEnabled="False" Margin="0,8,0,0" Click="Empezar_Click"/>
+            </StackPanel>
+
+            <c:AvisoPrivacidad Texto="Tu perfil y tu historial se guardan solo en esta computadora. Sereno no se conecta a internet."/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

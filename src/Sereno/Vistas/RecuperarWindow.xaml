@@ -1,0 +1,67 @@
+<Window x:Class="Sereno.Vistas.RecuperarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Sereno.Controles"
+        Title="Sereno · Recuperar acceso" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
+        Icon="/Recursos/sereno.ico">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel Margin="32,28,32,24">
+            <c:Marca/>
+            <c:IndicadorPasos x:Name="Pasos"/>
+
+            <!-- Paso 1: verificar la clave -->
+            <StackPanel x:Name="Paso1">
+                <TextBlock Style="{StaticResource Titulo}" Text="Recuperá tu acceso"/>
+                <TextBlock x:Name="BajadaPaso1" Style="{StaticResource Bajada}"/>
+
+                <c:CampoTexto x:Name="Clave" Etiqueta="Clave de recuperación" LongitudMaxima="19"
+                              Monoespaciada="True" Ayuda="Formato: XXXX-XXXX-XXXX-XXXX"/>
+
+                <Button x:Name="Verificar" Style="{StaticResource BotonPrimario}" Content="Verificar clave"
+                        IsDefault="True" Click="Verificar_Click"/>
+
+                <StackPanel Margin="0,12,0,0">
+                    <Button Style="{StaticResource BotonEnlace}" Content="Volver a iniciar sesión"
+                            Click="Volver_Click"/>
+                </StackPanel>
+
+                <c:AvisoPrivacidad Texto="No hay recuperación por email: Sereno no guarda tus datos en ningún servidor. La clave está en el archivo clave-recuperacion.txt de la carpeta de tu perfil, si la guardaste ahí."/>
+            </StackPanel>
+
+            <!-- Paso 2: nueva contraseña -->
+            <StackPanel x:Name="Paso2" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource Titulo}" Text="Elegí una contraseña nueva"/>
+                <TextBlock Style="{StaticResource Bajada}" Text="Tu historial y tu configuración se mantienen."/>
+
+                <c:CampoContrasena x:Name="Nueva" Etiqueta="Nueva contraseña" Ayuda="Al menos 8 caracteres."/>
+                <c:CampoContrasena x:Name="Repetir" Etiqueta="Repetir contraseña"/>
+
+                <Button x:Name="Guardar" Style="{StaticResource BotonPrimario}" Content="Guardar contraseña"
+                        Click="Guardar_Click"/>
+
+                <StackPanel Margin="0,12,0,0">
+                    <Button Style="{StaticResource BotonEnlace}" Content="Usar otra clave"
+                            Click="OtraClave_Click"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Paso 3: listo -->
+            <StackPanel x:Name="Paso3" Visibility="Collapsed">
+                <TextBlock Style="{StaticResource Titulo}" Text="Contraseña guardada"/>
+                <TextBlock Style="{StaticResource Bajada}"
+                           Text="Ya podés iniciar sesión con tu contraseña nueva. Tu clave de recuperación sigue siendo la misma."/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                    <Path Data="{StaticResource GeoTilde}" Width="18" Height="18" Stretch="Uniform"
+                          Stroke="{DynamicResource Exito}" StrokeThickness="2.5"
+                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="0,0,8,0"/>
+                    <TextBlock x:Name="ExitoTexto" Foreground="{DynamicResource Exito}" TextWrapping="Wrap"
+                               AutomationProperties.LiveSetting="Polite"/>
+                </StackPanel>
+
+                <Button x:Name="IrALogin" Style="{StaticResource BotonPrimario}" Content="Iniciar sesión"
+                        Click="Volver_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

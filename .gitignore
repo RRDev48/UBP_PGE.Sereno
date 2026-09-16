@@ -1,0 +1,10 @@
+# Compilación
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+# Publicaciones
+publish/
+*.pubxml.user
