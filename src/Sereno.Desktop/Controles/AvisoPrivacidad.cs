@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Sereno.Controles
+namespace Sereno.Desktop.Controles
 {
     /// <summary>Candado + texto al pie de las ventanas de acceso.</summary>
     public sealed class AvisoPrivacidad : Border

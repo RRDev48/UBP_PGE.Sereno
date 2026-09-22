@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media.Animation;
-using Sereno.Servicios;
+using Sereno.Desktop.Servicios;
+using Sereno.Platform.Storage;
 
-namespace Sereno.Vistas
+namespace Sereno.Desktop.Vistas
 {
     /// <summary>
     /// Pantalla de carga. Lee los perfiles en segundo plano y avisa con CargaCompleta.

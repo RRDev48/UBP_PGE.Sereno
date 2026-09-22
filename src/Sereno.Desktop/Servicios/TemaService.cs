@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using Microsoft.Win32;
 
-namespace Sereno.Servicios
+namespace Sereno.Desktop.Servicios
 {
     /// <summary>Aplica el tema claro u oscuro según la configuración de Windows.</summary>
     public static class TemaService

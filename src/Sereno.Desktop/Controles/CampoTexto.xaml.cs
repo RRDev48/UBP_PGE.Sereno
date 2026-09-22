@@ -4,9 +4,9 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Sereno.Servicios;
+using Sereno.Desktop.Servicios;
 
-namespace Sereno.Controles
+namespace Sereno.Desktop.Controles
 {
     /// <summary>Campo de texto con etiqueta, ayuda y error, con el mismo aspecto que CampoContrasena.</summary>
     public partial class CampoTexto : UserControl

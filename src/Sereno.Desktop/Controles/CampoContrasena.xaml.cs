@@ -3,9 +3,9 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Sereno.Servicios;
+using Sereno.Desktop.Servicios;
 
-namespace Sereno.Controles
+namespace Sereno.Desktop.Controles
 {
     /// <summary>
     /// Campo de contraseña con botón para mostrarla, texto de ayuda y mensaje de error.

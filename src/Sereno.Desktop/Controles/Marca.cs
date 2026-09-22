@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Sereno.Controles
+namespace Sereno.Desktop.Controles
 {
     /// <summary>Luna + "Sereno". Se repite arriba de cada ventana de acceso.</summary>
     public sealed class Marca : StackPanel

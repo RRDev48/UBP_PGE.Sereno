@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Automation.Peers;
 
-namespace Sereno.Servicios
+namespace Sereno.Desktop.Servicios
 {
     public static class Accesibilidad
     {

@@ -1,7 +1,7 @@
-<Window x:Class="Sereno.Vistas.RegistroWindow"
+<Window x:Class="Sereno.Desktop.Vistas.RegistroWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:c="clr-namespace:Sereno.Controles"
+        xmlns:c="clr-namespace:Sereno.Desktop.Controles"
         Title="Sereno · Crear perfil" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
         Icon="/Recursos/sereno.ico">
     <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">

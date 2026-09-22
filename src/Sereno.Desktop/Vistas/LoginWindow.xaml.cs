@@ -5,10 +5,10 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Sereno.Modelos;
-using Sereno.Servicios;
+using Sereno.Core.Modelos;
+using Sereno.Platform.Storage;
 
-namespace Sereno.Vistas
+namespace Sereno.Desktop.Vistas
 {
     /// <summary>
     /// Inicio de sesión. No navega por su cuenta: dispara eventos y la aplicación decide

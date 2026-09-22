@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 
-namespace Sereno.Controles
+namespace Sereno.Desktop.Controles
 {
     /// <summary>
     /// Muestra en qué paso está la persona. Cada paso combina número (o tilde), texto y estado,

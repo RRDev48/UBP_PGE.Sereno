@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shapes;
-using Sereno.Modelos;
-using Sereno.Servicios;
+using Sereno.Core.Acceso;
+using Sereno.Core.Modelos;
+using Sereno.Desktop.Servicios;
+using Sereno.Platform.Storage;
 
-namespace Sereno.Vistas
+namespace Sereno.Desktop.Vistas
 {
     /// <summary>Creación de un perfil local en dos pasos: datos y clave de recuperación.</summary>
     public partial class RegistroWindow : Window

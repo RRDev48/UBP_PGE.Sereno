@@ -1,11 +1,14 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Windows;
-using Sereno.Modelos;
-using Sereno.Servicios;
-using Sereno.Vistas;
+using Sereno.Core.Modelos;
+using Sereno.Desktop.Servicios;
+using Sereno.Desktop.Vistas;
+using Sereno.Platform.Storage;
+using Sereno.Platform.Tray;
 
-namespace Sereno
+namespace Sereno.Desktop
 {
     /// <summary>
     /// Punto de entrada y coordinador del flujo de acceso.
@@ -42,7 +45,7 @@ namespace Sereno
             TemaService.Aplicar(this);
 
             _almacen = new AlmacenPerfiles(Rutas.Base);
-            _bandeja = new BandejaService();
+            _bandeja = new BandejaService(ObtenerStreamDelIcono());
             _bandeja.CierreDeSesionSolicitado += Bandeja_CierreDeSesionSolicitado;
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
 
@@ -57,6 +60,13 @@ namespace Sereno
             _instanciaUnica?.Dispose();
             base.OnExit(e);
         }
+
+        /// <summary>
+        /// Sereno.Platform no conoce recursos empaquetados de WPF, así que el ícono de la
+        /// bandeja se abre acá y se le pasa a BandejaService como Stream.
+        /// </summary>
+        private static Stream? ObtenerStreamDelIcono() =>
+            GetResourceStream(new Uri("pack://application:,,,/Recursos/sereno.ico"))?.Stream;
 
         // ---------- Decisiones de navegación ----------
 
