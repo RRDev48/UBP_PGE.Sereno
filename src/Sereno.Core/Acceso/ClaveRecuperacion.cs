@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Sereno.Servicios
+namespace Sereno.Core.Acceso
 {
     /// <summary>
     /// Genera y da formato a la clave de recuperación (16 caracteres, en grupos de 4).

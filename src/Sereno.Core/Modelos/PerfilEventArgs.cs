@@ -1,6 +1,6 @@
 using System;
 
-namespace Sereno.Modelos
+namespace Sereno.Core.Modelos
 {
     /// <summary>Datos de los eventos que las ventanas le envían a la aplicación.</summary>
     public sealed class PerfilEventArgs : EventArgs

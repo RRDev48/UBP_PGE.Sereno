@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Sereno.Modelos
+namespace Sereno.Core.Modelos
 {
     /// <summary>
     /// Perfil local de una persona. Se guarda como perfil.json dentro de su carpeta.

@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Sereno.Servicios
+namespace Sereno.Core.Acceso
 {
     public enum NivelFuerza { Vacia = 0, Debil = 1, Aceptable = 2, Fuerte = 3 }
 

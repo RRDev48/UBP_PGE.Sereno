@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Sereno.Servicios
+namespace Sereno.Core.Acceso
 {
     /// <summary>
     /// Deriva y verifica secretos con PBKDF2-SHA256. Se usa para la contraseña y para la clave

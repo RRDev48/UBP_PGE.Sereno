@@ -1,4 +1,4 @@
-namespace Sereno.Modelos
+namespace Sereno.Core.Modelos
 {
     /// <summary>Preferencias generales de la instalación. Se guarda en config.json.</summary>
     public sealed class Configuracion
