@@ -1,10 +1,10 @@
 using System;
-using System.Windows;
-using Sereno.Modelos;
+using System.IO;
+using Sereno.Core.Modelos;
 using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
-namespace Sereno.Servicios
+namespace Sereno.Platform.Tray
 {
     /// <summary>
     /// Ícono de Sereno en la bandeja del sistema. Una vez iniciada la sesión, la aplicación
@@ -20,12 +20,16 @@ namespace Sereno.Servicios
         public event EventHandler<PerfilEventArgs>? CierreDeSesionSolicitado;
         public event EventHandler? SalidaSolicitada;
 
-        public BandejaService()
+        /// <param name="iconoStream">
+        /// Contenido del ícono a mostrar en la bandeja, o null para usar el ícono por defecto
+        /// del sistema. Sereno.Platform no conoce recursos empaquetados de WPF: quien lo llama
+        /// (Sereno.Desktop) es responsable de abrir el stream.
+        /// </param>
+        public BandejaService(Stream? iconoStream)
         {
-            var recurso = Application.GetResourceStream(new Uri("pack://application:,,,/Recursos/sereno.ico"));
             _icono = new Forms.NotifyIcon
             {
-                Icon = recurso is null ? Drawing.SystemIcons.Application : new Drawing.Icon(recurso.Stream),
+                Icon = iconoStream is null ? Drawing.SystemIcons.Application : new Drawing.Icon(iconoStream),
                 Text = "Sereno",
                 Visible = false,
             };

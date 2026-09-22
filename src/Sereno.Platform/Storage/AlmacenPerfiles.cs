@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Sereno.Modelos;
+using Sereno.Core.Acceso;
+using Sereno.Core.Modelos;
 
-namespace Sereno.Servicios
+namespace Sereno.Platform.Storage
 {
     /// <summary>
     /// Guarda y lee los perfiles locales. Estructura en disco:
