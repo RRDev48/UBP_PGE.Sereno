@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Sereno.Desktop</RootNamespace>
+    <AssemblyName>Sereno</AssemblyName>
+    <ApplicationIcon>Recursos\sereno.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    <Product>Sereno</Product>
+    <Description>Asistente de pausas para Windows. Módulo de acceso con perfiles locales.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Recursos\sereno.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sereno.Core\Sereno.Core.csproj" />
+    <ProjectReference Include="..\Sereno.Platform\Sereno.Platform.csproj" />
+  </ItemGroup>
+
+</Project>

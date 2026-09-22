@@ -1,0 +1,60 @@
+<Window x:Class="Sereno.Desktop.Vistas.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Sereno.Desktop.Controles"
+        Title="Sereno · Iniciar sesión" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
+        Icon="/Recursos/sereno.ico">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel Margin="32,28,32,24">
+            <c:Marca/>
+
+            <TextBlock Style="{StaticResource Titulo}" Text="Hola de nuevo"/>
+            <TextBlock Style="{StaticResource Bajada}"
+                       Text="Ingresá tu contraseña para abrir tu perfil y tu historial."/>
+
+            <Border Style="{StaticResource TarjetaPerfil}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Width="44" Height="44">
+                        <Ellipse Fill="{DynamicResource FondoPrimario}"/>
+                        <TextBlock x:Name="InicialTexto" Foreground="{DynamicResource TextoPrimario}"
+                                   FontFamily="{StaticResource FuenteTitulo}" FontSize="18" FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <StackPanel Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center">
+                        <TextBlock x:Name="NombreTexto" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="Perfil en esta computadora" FontSize="13"
+                                   Foreground="{DynamicResource TextoSecundario}"/>
+                    </StackPanel>
+                    <Button x:Name="CambiarPerfil" Grid.Column="2" Style="{StaticResource BotonEnlace}"
+                            Content="Cambiar" AutomationProperties.Name="Cambiar de perfil"
+                            Click="CambiarPerfil_Click"/>
+                </Grid>
+            </Border>
+
+            <c:CampoContrasena x:Name="Contrasena" Etiqueta="Contraseña" Margin="0,0,0,6"/>
+
+            <CheckBox x:Name="AbrirSinContrasena">
+                <TextBlock Text="Abrir sin pedir contraseña en esta computadora" TextWrapping="Wrap"/>
+            </CheckBox>
+
+            <Button x:Name="IniciarSesion" Style="{StaticResource BotonPrimario}" Content="Iniciar sesión"
+                    IsDefault="True" Margin="0,12,0,0" Click="IniciarSesion_Click"/>
+
+            <StackPanel Margin="0,12,0,0">
+                <Button Style="{StaticResource BotonEnlace}" Content="Olvidé mi contraseña"
+                        Click="Olvide_Click"/>
+                <Button Style="{StaticResource BotonEnlace}" Content="Crear otro perfil"
+                        Click="CrearPerfil_Click"/>
+                <Button Style="{StaticResource BotonEnlace}" Content="Usar Sereno sin perfil"
+                        Click="SinPerfil_Click"/>
+            </StackPanel>
+
+            <c:AvisoPrivacidad Texto="Tu perfil y tu historial se guardan solo en esta computadora. Sereno no se conecta a internet."/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

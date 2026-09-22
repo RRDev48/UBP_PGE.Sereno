@@ -2,6 +2,8 @@
 
 Sereno es un asistente de escritorio para Windows que avisa cuándo tomar una micropausa sin interrumpir la tarea en curso. Este repositorio contiene el **módulo de acceso**: la pantalla de carga, el inicio de sesión, la creación de perfiles y la recuperación de la contraseña.
 
+El código está organizado en cuatro proyectos (ver [Estructura](#estructura)): `Sereno.Core` concentra la lógica pura sin dependencias de Windows, `Sereno.Platform` los adaptadores de Windows, `Sereno.Desktop` la aplicación WPF, y `Sereno.Tests` los tests de las dos primeras capas.
+
 Proyecto integrador de **Programación Genérica y Eventos** · Universidad Blas Pascal · Ingeniería en Informática.
 
 ## Por qué hay perfiles
@@ -42,47 +44,92 @@ El prototipo visual que se usó para diseñar estas pantallas está en [`docs/pr
 ```bash
 git clone https://github.com/RRDev48/UBP_PGE.Sereno.git
 cd UBP_PGE.Sereno
-dotnet run --project src/Sereno
+dotnet build
+dotnet run --project src/Sereno.Desktop
 ```
 
 **Generar un ejecutable:**
 
 ```bash
-dotnet publish src/Sereno -c Release -r win-x64 --self-contained false -o publish
+dotnet publish src/Sereno.Desktop -c Release -r win-x64 --self-contained false -o publish
 ```
 
 Solo se puede ejecutar una instancia a la vez. Si Sereno ya está abierto, un segundo inicio muestra un aviso y se cierra.
 
+## Correr los tests
+
+```bash
+dotnet test
+```
+
+`Sereno.Tests` cubre la lógica de `Sereno.Core` (hashing, clave de recuperación, reglas de
+contraseña) y de `Sereno.Platform` (`AlmacenPerfiles`, con carpetas temporales por test), más un
+test de arquitectura que falla si `Sereno.Core` llega a referenciar `PresentationFramework`,
+`WindowsBase` o `System.Windows.Forms`.
+
 ## Estructura
+
+El proyecto está dividido en cuatro capas. La regla central de la arquitectura es que
+**`Sereno.Core` no referencia nada de WPF ni de Windows**: es lógica pura, testeable sin
+depender de la plataforma. `Sereno.Platform` traduce esa lógica a APIs de Windows (archivos,
+bandeja del sistema). `Sereno.Desktop` es la aplicación WPF que junta todo.
 
 ```
 Sereno.sln
-src/Sereno/
-├── App.xaml(.cs)            Punto de entrada y coordinador de la navegación
-├── Vistas/
-│   ├── SplashWindow         Pantalla de carga
-│   ├── LoginWindow          Iniciar sesión
-│   ├── RegistroWindow       Crear perfil (2 pasos)
-│   └── RecuperarWindow      Recuperar acceso (3 pasos)
-├── Controles/
-│   ├── CampoContrasena      PasswordBox + botón mostrar + ayuda + error
-│   ├── CampoTexto           TextBox con el mismo formato
-│   ├── IndicadorPasos       Pasos con número, texto y estado
-│   ├── Marca                Luna + "Sereno"
-│   └── AvisoPrivacidad      Candado + texto al pie
-├── Servicios/
-│   ├── AlmacenPerfiles      Lectura y escritura de perfiles en disco
-│   ├── Hasher               PBKDF2-SHA256 para contraseña y clave
-│   ├── ClaveRecuperacion    Generación y formato de la clave
-│   ├── ReglasContrasena     Longitud mínima, repetición y fuerza
-│   ├── BandejaService       Ícono en la bandeja del sistema
-│   ├── TemaService          Tema claro u oscuro según Windows
-│   ├── Accesibilidad        Anuncios para lectores de pantalla
-│   └── Rutas                Carpeta base de datos
-├── Modelos/                 Perfil, Configuracion, PerfilEventArgs
-├── Temas/                   Claro.xaml, Oscuro.xaml, Estilos.xaml
-└── Recursos/sereno.ico
+├── src/Sereno.Core/         net8.0 · sin WPF ni Windows
+│   ├── Events/              (vacío por ahora: EventBus, IEvent, SubscriptionToken, EventQueue)
+│   ├── Timing/              (vacío por ahora: IClock, BlockTimer, BlockState)
+│   ├── History/             (vacío por ahora: CompletedBlockStack, SessionHistory)
+│   ├── Breaks/              (vacío por ahora: BreakCatalog, BreakSuggestion, BreakStep)
+│   ├── Acceso/              Hasher, ClaveRecuperacion, ReglasContrasena
+│   └── Modelos/             Perfil, Configuracion, PerfilEventArgs
+│
+├── src/Sereno.Platform/     net8.0-windows · adaptadores de Windows
+│   ├── Storage/             AlmacenPerfiles, Rutas
+│   ├── Tray/                BandejaService (ícono de la bandeja)
+│   ├── Speech/              (vacío por ahora)
+│   └── Notifications/       (vacío por ahora)
+│
+├── src/Sereno.Desktop/      net8.0-windows · WinExe, WPF · la aplicación
+│   ├── App.xaml(.cs)        Punto de entrada y coordinador de la navegación
+│   ├── Vistas/
+│   │   ├── SplashWindow     Pantalla de carga
+│   │   ├── LoginWindow      Iniciar sesión
+│   │   ├── RegistroWindow   Crear perfil (2 pasos)
+│   │   └── RecuperarWindow  Recuperar acceso (3 pasos)
+│   ├── Controles/
+│   │   ├── CampoContrasena  PasswordBox + botón mostrar + ayuda + error
+│   │   ├── CampoTexto       TextBox con el mismo formato
+│   │   ├── IndicadorPasos   Pasos con número, texto y estado
+│   │   ├── Marca            Luna + "Sereno"
+│   │   └── AvisoPrivacidad  Candado + texto al pie
+│   ├── Servicios/
+│   │   ├── TemaService      Tema claro u oscuro según Windows
+│   │   └── Accesibilidad    Anuncios para lectores de pantalla
+│   ├── Temas/               Claro.xaml, Oscuro.xaml, Estilos.xaml
+│   └── Recursos/sereno.ico
+│
+└── tests/Sereno.Tests/      net8.0-windows · xUnit
 ```
+
+Referencias entre proyectos:
+
+| Proyecto | Referencia a |
+|---|---|
+| `Sereno.Core` | ninguna |
+| `Sereno.Platform` | `Sereno.Core` |
+| `Sereno.Desktop` | `Sereno.Core`, `Sereno.Platform` |
+| `Sereno.Tests` | `Sereno.Core`, `Sereno.Platform` |
+
+`Sereno.Tests` apunta a `net8.0-windows` (en vez de `net8.0`) porque referencia a
+`Sereno.Platform`, que necesita Windows Forms para `NotifyIcon`; un proyecto `net8.0` no puede
+referenciar a uno `net8.0-windows`.
+
+**Un caso de esta regla:** `BandejaService` (bandeja del sistema) usa
+`System.Windows.Forms.NotifyIcon`, pero el ícono que muestra viene de un recurso empaquetado de
+WPF. Como `Sereno.Platform` no puede depender de WPF, `BandejaService` no busca el ícono por su
+cuenta: su constructor recibe un `Stream` (o `null`, para usar el ícono del sistema). Quien arma
+ese `Stream` a partir del recurso empaquetado es `Sereno.Desktop.App`, que sí conoce WPF.
 
 ## Flujo entre pantallas
 

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <!-- Solo se usa para el ícono de la bandeja del sistema (NotifyIcon). -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Sereno.Platform</RootNamespace>
+    <AssemblyName>Sereno.Platform</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sereno.Core\Sereno.Core.csproj" />
+  </ItemGroup>
+
+</Project>
