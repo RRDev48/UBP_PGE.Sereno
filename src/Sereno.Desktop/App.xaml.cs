@@ -42,7 +42,8 @@ namespace Sereno.Desktop
                 return;
             }
 
-            TemaService.Aplicar(this);
+            // Tema del sistema hasta que se lean las preferencias guardadas.
+            TemaService.Aplicar(this, new PreferenciasVisuales());
 
             _almacen = new AlmacenPerfiles(Rutas.Base);
             _bandeja = new BandejaService(ObtenerStreamDelIcono());
@@ -51,7 +52,11 @@ namespace Sereno.Desktop
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
 
             var splash = new SplashWindow(_almacen);
-            splash.CargaCompleta += (_, _) => Decidir();
+            splash.CargaCompleta += (_, _) =>
+            {
+                TemaService.Aplicar(this, _almacen.ObtenerPreferencias());
+                Decidir();
+            };
             Mostrar(splash);
         }
 

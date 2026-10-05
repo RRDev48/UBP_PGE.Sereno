@@ -17,6 +17,14 @@
             <c:CampoTexto x:Name="Pausa" Etiqueta="Pausa (minutos)" LongitudMaxima="2"
                           Ayuda="Entre 1 y 30 minutos."/>
 
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Lectura y visualización" Margin="0,24,0,10"/>
+            <CheckBox x:Name="FuenteLectura" Margin="0,0,0,12">
+                <TextBlock Text="Fuente para lectura cómoda" TextWrapping="Wrap"/>
+            </CheckBox>
+            <CheckBox x:Name="AltoContraste" Margin="0,0,0,12">
+                <TextBlock Text="Alto contraste" TextWrapping="Wrap"/>
+            </CheckBox>
+
             <Button Style="{StaticResource BotonPrimario}" Content="Guardar"
                     IsDefault="True" Margin="0,12,0,0" Click="Guardar_Click"/>
 

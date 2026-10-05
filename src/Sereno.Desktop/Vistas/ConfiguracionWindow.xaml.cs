@@ -2,7 +2,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using Sereno.Core.Modelos;
 using Sereno.Core.Timing;
+using Sereno.Desktop.Servicios;
 using Sereno.Platform.Storage;
 
 namespace Sereno.Desktop.Vistas
@@ -22,6 +24,10 @@ namespace Sereno.Desktop.Vistas
             Pausa.Texto = minutosPausa.ToString(CultureInfo.InvariantCulture);
             Bloque.TextoCambiado += (_, _) => Bloque.LimpiarError();
             Pausa.TextoCambiado += (_, _) => Pausa.LimpiarError();
+
+            PreferenciasVisuales preferencias = _almacen.ObtenerPreferencias();
+            FuenteLectura.IsChecked = preferencias.FuenteLectura;
+            AltoContraste.IsChecked = preferencias.AltoContraste;
 
             Loaded += (_, _) => Bloque.EnfocarCampo();
         }
@@ -46,9 +52,16 @@ namespace Sereno.Desktop.Vistas
                 return;
             }
 
+            var preferencias = new PreferenciasVisuales
+            {
+                FuenteLectura = FuenteLectura.IsChecked == true,
+                AltoContraste = AltoContraste.IsChecked == true,
+            };
+
             try
             {
                 _almacen.GuardarDuraciones(minutosBloque, minutosPausa);
+                _almacen.GuardarPreferencias(preferencias);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -56,6 +69,7 @@ namespace Sereno.Desktop.Vistas
                 return;
             }
 
+            TemaService.Aplicar(Application.Current, preferencias);
             Close();
         }
 
