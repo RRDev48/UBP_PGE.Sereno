@@ -32,6 +32,7 @@ namespace Sereno.Desktop
         private BandejaService _bandeja = null!;
         private readonly EventBus _bus = new();
         private MotorDeBloques _motor = null!;
+        private AvisoFinDeBloque _aviso = null!;
         private SubscriptionToken? _avisoFinDeBloque;
         private Window? _ventanaActual;
 
@@ -57,8 +58,8 @@ namespace Sereno.Desktop
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
             _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
-            _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e => _bandeja.MostrarAviso(
-                "Bloque terminado", $"Tomá una pausa. Completaste {e.Minutos} minutos de foco."));
+            _aviso = new AvisoFinDeBloque();
+            _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e => _aviso.Mostrar(e.Minutos));
 
             var splash = new SplashWindow(_almacen);
             splash.CargaCompleta += (_, _) =>

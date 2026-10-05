@@ -72,9 +72,6 @@ namespace Sereno.Platform.Tray
                 Forms.ToolTipIcon.None);
         }
 
-        public void MostrarAviso(string titulo, string texto) =>
-            _icono.ShowBalloonTip(5000, titulo, texto, Forms.ToolTipIcon.None);
-
         public void Ocultar()
         {
             _icono.Visible = false;

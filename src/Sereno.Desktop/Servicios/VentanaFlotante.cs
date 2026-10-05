@@ -6,13 +6,14 @@ using System.Windows.Interop;
 namespace Sereno.Desktop.Servicios
 {
     /// <summary>
-    /// Hace que una ventana no tome el foco al mostrarse ni al recibir un clic (WS_EX_NOACTIVATE).
-    /// Con ShowActivated=false solo no se activa al mostrarse; el estilo extendido cubre también el clic.
+    /// Ventana que no roba el foco ni al mostrarse ni al hacer clic (WS_EX_NOACTIVATE), y que no
+    /// aparece en Alt+Tab (WS_EX_TOOLWINDOW). ShowActivated=false cubre solo el primer caso.
     /// </summary>
-    public static class VentanaNoActivable
+    public static class VentanaFlotante
     {
         private const int GwlExstyle = -20;
         private const long WsExNoactivate = 0x08000000L;
+        private const long WsExToolwindow = 0x00000080L;
 
         public static void Aplicar(Window ventana)
         {
@@ -21,7 +22,7 @@ namespace Sereno.Desktop.Servicios
             {
                 IntPtr hwnd = new WindowInteropHelper(ventana).Handle;
                 long estilo = GetWindowLongPtr(hwnd, GwlExstyle).ToInt64();
-                SetWindowLongPtr(hwnd, GwlExstyle, new IntPtr(estilo | WsExNoactivate));
+                SetWindowLongPtr(hwnd, GwlExstyle, new IntPtr(estilo | WsExNoactivate | WsExToolwindow));
             };
         }
 
