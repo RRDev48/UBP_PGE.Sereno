@@ -35,6 +35,42 @@
                 <ComboBoxItem Content="150 %" Tag="150"/>
             </ComboBox>
 
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Canal del aviso" Margin="0,24,0,10"/>
+            <RadioButton x:Name="CanalVisual" GroupName="Canal" Content="Solo visual (ventana en la esquina)"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <RadioButton x:Name="CanalHablado" GroupName="Canal" Content="Solo hablado (sin ventana)"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
+                         MinHeight="44" Margin="0,0,0,12"/>
+            <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,12">
+                <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
+            </CheckBox>
+
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Datos y privacidad" Margin="0,24,0,10"/>
+            <TextBlock x:Name="UbicacionDatos" TextWrapping="Wrap" Margin="0,0,0,10"/>
+            <WrapPanel Margin="0,0,0,8">
+                <Button Style="{StaticResource BotonSecundario}" Content="Exportar mis datos"
+                        Margin="0,0,8,8" Click="Exportar_Click"/>
+                <Button Style="{StaticResource BotonSecundario}" Content="Borrar todos los datos"
+                        Margin="0,0,0,8" Click="PedirBorrado_Click"/>
+            </WrapPanel>
+            <Border x:Name="PanelBorrado" Visibility="Collapsed" BorderBrush="{DynamicResource Error}"
+                    BorderThickness="2" CornerRadius="10" Padding="14" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="¿Borrar todos los datos de Sereno?" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <TextBlock Style="{StaticResource Ayuda}"
+                               Text="Se eliminan los perfiles, las claves de recuperación y el historial. No se puede deshacer."/>
+                    <WrapPanel Margin="0,10,0,0">
+                        <Button Style="{StaticResource BotonSecundario}" Content="Sí, borrar todo"
+                                Foreground="{DynamicResource Error}" Margin="0,0,8,8" Click="ConfirmarBorrado_Click"/>
+                        <Button Style="{StaticResource BotonPrimario}" Content="Cancelar"
+                                Margin="0,0,0,8" Click="CancelarBorrado_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
             <Button Style="{StaticResource BotonPrimario}" Content="Guardar"
                     IsDefault="True" Margin="0,12,0,0" Click="Guardar_Click"/>
 

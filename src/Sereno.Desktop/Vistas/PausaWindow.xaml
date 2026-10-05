@@ -1,0 +1,61 @@
+<Window x:Class="Sereno.Desktop.Vistas.PausaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Sereno.Desktop.Controles"
+        Title="Sereno · Pausa" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
+        Icon="/Recursos/sereno.ico" Closed="Ventana_Cerrada">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" LayoutTransform="{DynamicResource EscalaVisual}">
+        <StackPanel Margin="32,28,32,24">
+            <c:Marca/>
+
+            <TextBlock Style="{StaticResource Titulo}" Text="Proponé algo para tu pausa"/>
+            <TextBlock x:Name="BajadaTexto" Style="{StaticResource Bajada}"/>
+
+            <ListBox x:Name="Lista" MaxHeight="300" Margin="0,0,0,16"
+                     AutomationProperties.Name="Micropausas disponibles" SelectionChanged="Lista_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="0,6">
+                            <TextBlock Text="{Binding Icono}" FontSize="22" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Nombre}" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Etiqueta}" FontSize="13"
+                                           Foreground="{DynamicResource TextoSecundario}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel x:Name="Detalle" Visibility="Collapsed">
+                <TextBlock x:Name="NombreDetalle" Style="{StaticResource Etiqueta}" FontSize="17"/>
+                <TextBlock x:Name="DescripcionDetalle" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+                <StackPanel x:Name="Rutina" Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Pasos"/>
+                    <StackPanel x:Name="PasosPanel" Margin="0,0,0,12"/>
+
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Avance"/>
+                    <RadioButton x:Name="AvanceManual" GroupName="Avance" Content="Manual: yo decido cuándo sigo"
+                                 IsChecked="True" Margin="0,0,0,6" MinHeight="44" Checked="Avance_Changed"/>
+                    <RadioButton x:Name="AvanceAutomatico" GroupName="Avance" Content="Automático cada paso"
+                                 Margin="0,0,0,12" MinHeight="44" Checked="Avance_Changed"/>
+
+                    <WrapPanel Margin="0,0,0,12">
+                        <Button x:Name="SiguientePaso" Style="{StaticResource BotonSecundario}" Content="Siguiente paso"
+                                Margin="0,0,8,8" Click="SiguientePaso_Click"/>
+                        <Button Style="{StaticResource BotonEnlace}" Content="Salir de la rutina"
+                                Margin="0,0,8,8" Click="SalirRutina_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+
+                <Button x:Name="TomarPausa" Style="{StaticResource BotonPrimario}" Content="Tomar esta pausa"
+                        Margin="0,4,0,0" Click="TomarPausa_Click"/>
+            </StackPanel>
+
+            <StackPanel Margin="0,12,0,0">
+                <Button Style="{StaticResource BotonEnlace}" Content="Cerrar" IsCancel="True" Click="Cerrar_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -60,8 +60,14 @@ namespace Sereno.Desktop
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
             _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
-            _aviso = new AvisoFinDeBloque(_historial);
-            _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e => _aviso.Mostrar(e.Minutos));
+            _bandeja.PausaSolicitada += (_, _) => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
+            _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
+            _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja);
+            _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e =>
+            {
+                _historial.Registrar(TipoEntrada.BloqueCompletado, e.Minutos);
+                _aviso.Mostrar(e.Minutos);
+            });
 
             var splash = new SplashWindow(_almacen);
             splash.CargaCompleta += (_, _) =>
