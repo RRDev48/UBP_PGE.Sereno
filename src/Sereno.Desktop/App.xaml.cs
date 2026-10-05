@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using Sereno.Core.Events;
+using Sereno.Core.History;
 using Sereno.Core.Modelos;
 using Sereno.Core.Timing;
 using Sereno.Desktop.Servicios;
@@ -33,6 +34,7 @@ namespace Sereno.Desktop
         private readonly EventBus _bus = new();
         private MotorDeBloques _motor = null!;
         private AvisoFinDeBloque _aviso = null!;
+        private readonly SessionHistory _historial = new();
         private SubscriptionToken? _avisoFinDeBloque;
         private Window? _ventanaActual;
 
@@ -58,7 +60,7 @@ namespace Sereno.Desktop
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
             _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
-            _aviso = new AvisoFinDeBloque();
+            _aviso = new AvisoFinDeBloque(_historial);
             _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e => _aviso.Mostrar(e.Minutos));
 
             var splash = new SplashWindow(_almacen);
