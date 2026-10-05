@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Sereno.Core.Modelos;
 using Sereno.Platform.Storage;
 using Xunit;
 
@@ -112,6 +113,41 @@ namespace Sereno.Tests.Storage
             recargado.Cargar();
             Assert.Equal((40, 10), recargado.ObtenerDuraciones());
             Assert.Equal(perfil.Id, recargado.UltimoPerfil()?.Id);
+        }
+
+        [Fact]
+        public void ObtenerPreferencias_SinConfiguracionGuardada_NoActivaNada()
+        {
+            var preferencias = _almacen.ObtenerPreferencias();
+
+            Assert.False(preferencias.FuenteLectura);
+            Assert.False(preferencias.AltoContraste);
+        }
+
+        [Fact]
+        public void GuardarPreferencias_SeConservanAlReabrirLaAplicacion()
+        {
+            _almacen.GuardarPreferencias(new PreferenciasVisuales { FuenteLectura = true, AltoContraste = true });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            PreferenciasVisuales preferencias = recargado.ObtenerPreferencias();
+            Assert.True(preferencias.FuenteLectura);
+            Assert.True(preferencias.AltoContraste);
+        }
+
+        [Fact]
+        public void RecordarUltimo_NoPierdeLasPreferenciasGuardadas()
+        {
+            _almacen.GuardarPreferencias(new PreferenciasVisuales { AltoContraste = true });
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+
+            _almacen.RecordarUltimo(perfil);
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+            Assert.True(recargado.ObtenerPreferencias().AltoContraste);
         }
 
         [Fact]

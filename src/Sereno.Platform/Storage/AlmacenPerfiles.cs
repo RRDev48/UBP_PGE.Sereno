@@ -213,11 +213,35 @@ namespace Sereno.Platform.Storage
             EscribirConfiguracion(copia);
         }
 
+        public PreferenciasVisuales ObtenerPreferencias()
+        {
+            lock (_candado)
+                return CopiarPreferencias(_config.Visuales);
+        }
+
+        public void GuardarPreferencias(PreferenciasVisuales preferencias)
+        {
+            Configuracion copia;
+            lock (_candado)
+            {
+                _config.Visuales = CopiarPreferencias(preferencias);
+                copia = CopiarConfiguracion();
+            }
+            EscribirConfiguracion(copia);
+        }
+
         private Configuracion CopiarConfiguracion() => new()
         {
             UltimoPerfilId = _config.UltimoPerfilId,
             MinutosBloque = _config.MinutosBloque,
             MinutosPausa = _config.MinutosPausa,
+            Visuales = CopiarPreferencias(_config.Visuales),
+        };
+
+        private static PreferenciasVisuales CopiarPreferencias(PreferenciasVisuales origen) => new()
+        {
+            FuenteLectura = origen.FuenteLectura,
+            AltoContraste = origen.AltoContraste,
         };
 
         private void EscribirConfiguracion(Configuracion config)

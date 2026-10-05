@@ -11,5 +11,7 @@ namespace Sereno.Core.Modelos
         public int MinutosBloque { get; set; } = Duraciones.BloquePorDefecto;
 
         public int MinutosPausa { get; set; } = Duraciones.PausaPorDefecto;
+
+        public PreferenciasVisuales Visuales { get; set; } = new();
     }
 }
