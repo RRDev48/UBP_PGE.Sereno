@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Sereno.Core.Acceso;
 using Sereno.Core.Modelos;
+using Sereno.Core.Timing;
 
 namespace Sereno.Platform.Storage
 {
@@ -177,17 +178,52 @@ namespace Sereno.Platform.Storage
             lock (_candado)
             {
                 _config.UltimoPerfilId = perfil.Id;
-                copia = new Configuracion { UltimoPerfilId = _config.UltimoPerfilId };
+                copia = CopiarConfiguracion();
             }
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(_archivoConfig)!);
-                EscribirSeguro(_archivoConfig, JsonSerializer.Serialize(copia, OpcionesJson));
+                EscribirConfiguracion(copia);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
                 // Recordar el último perfil es una comodidad: si falla, la app sigue funcionando.
             }
+        }
+
+        public (int MinutosBloque, int MinutosPausa) ObtenerDuraciones()
+        {
+            lock (_candado)
+                return (_config.MinutosBloque, _config.MinutosPausa);
+        }
+
+        public void GuardarDuraciones(int minutosBloque, int minutosPausa)
+        {
+            if (!Duraciones.EsBloqueValido(minutosBloque))
+                throw new ArgumentOutOfRangeException(nameof(minutosBloque));
+            if (!Duraciones.EsPausaValida(minutosPausa))
+                throw new ArgumentOutOfRangeException(nameof(minutosPausa));
+
+            Configuracion copia;
+            lock (_candado)
+            {
+                _config.MinutosBloque = minutosBloque;
+                _config.MinutosPausa = minutosPausa;
+                copia = CopiarConfiguracion();
+            }
+            EscribirConfiguracion(copia);
+        }
+
+        private Configuracion CopiarConfiguracion() => new()
+        {
+            UltimoPerfilId = _config.UltimoPerfilId,
+            MinutosBloque = _config.MinutosBloque,
+            MinutosPausa = _config.MinutosPausa,
+        };
+
+        private void EscribirConfiguracion(Configuracion config)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_archivoConfig)!);
+            EscribirSeguro(_archivoConfig, JsonSerializer.Serialize(config, OpcionesJson));
         }
 
         /// <summary>Perfil sin contraseña para "Usar Sereno sin perfil". Se crea la primera vez.</summary>

@@ -79,5 +79,48 @@ namespace Sereno.Tests.Storage
             Assert.Single(recargado.Perfiles);
             Assert.Equal("Lucía", recargado.Perfiles[0].Nombre);
         }
+
+        [Fact]
+        public void ObtenerDuraciones_SinConfiguracionGuardada_DevuelveLosValoresPorDefecto()
+        {
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            Assert.Equal((25, 5), recargado.ObtenerDuraciones());
+        }
+
+        [Fact]
+        public void GuardarDuraciones_SeConservaAlReabrirLaAplicacion()
+        {
+            _almacen.GuardarDuraciones(40, 10);
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            Assert.Equal((40, 10), recargado.ObtenerDuraciones());
+        }
+
+        [Fact]
+        public void RecordarUltimo_NoPierdeLasDuracionesGuardadas()
+        {
+            _almacen.GuardarDuraciones(40, 10);
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+
+            _almacen.RecordarUltimo(perfil);
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+            Assert.Equal((40, 10), recargado.ObtenerDuraciones());
+            Assert.Equal(perfil.Id, recargado.UltimoPerfil()?.Id);
+        }
+
+        [Fact]
+        public void GuardarDuraciones_FueraDeRango_LanzaExcepcionSinEscribir()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => _almacen.GuardarDuraciones(91, 5));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _almacen.GuardarDuraciones(25, 0));
+
+            Assert.Equal((25, 5), _almacen.ObtenerDuraciones());
+        }
     }
 }
