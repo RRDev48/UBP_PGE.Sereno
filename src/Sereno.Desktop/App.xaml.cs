@@ -2,10 +2,13 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using Sereno.Core.Events;
 using Sereno.Core.Modelos;
+using Sereno.Core.Timing;
 using Sereno.Desktop.Servicios;
 using Sereno.Desktop.Vistas;
 using Sereno.Platform.Storage;
+using Sereno.Platform.Timing;
 using Sereno.Platform.Tray;
 
 namespace Sereno.Desktop
@@ -27,6 +30,9 @@ namespace Sereno.Desktop
         private Mutex? _instanciaUnica;
         private AlmacenPerfiles _almacen = null!;
         private BandejaService _bandeja = null!;
+        private readonly EventBus _bus = new();
+        private MotorDeBloques _motor = null!;
+        private SubscriptionToken? _avisoFinDeBloque;
         private Window? _ventanaActual;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -50,6 +56,9 @@ namespace Sereno.Desktop
             _bandeja.CierreDeSesionSolicitado += Bandeja_CierreDeSesionSolicitado;
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
+            _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
+            _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e => _bandeja.MostrarAviso(
+                "Bloque terminado", $"Tomá una pausa. Completaste {e.Minutos} minutos de foco."));
 
             var splash = new SplashWindow(_almacen);
             splash.CargaCompleta += (_, _) =>
@@ -62,6 +71,7 @@ namespace Sereno.Desktop
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _motor?.Dispose();
             _bandeja?.Dispose();
             _instanciaUnica?.Dispose();
             base.OnExit(e);
@@ -136,6 +146,7 @@ namespace Sereno.Desktop
         {
             _almacen.RecordarUltimo(perfil);
             _bandeja.Mostrar(perfil);
+            _motor.Iniciar(_almacen.ObtenerDuraciones().MinutosBloque);
             CerrarVentanaActual();
 
             // Acá se conecta el resto de Sereno (temporizador de pausas, historial del perfil).
@@ -143,6 +154,7 @@ namespace Sereno.Desktop
 
         private void Bandeja_CierreDeSesionSolicitado(object? sender, PerfilEventArgs e)
         {
+            _motor.Detener();
             _bandeja.Ocultar();
             MostrarAccesoTrasCerrarSesion(e.Perfil);
         }
