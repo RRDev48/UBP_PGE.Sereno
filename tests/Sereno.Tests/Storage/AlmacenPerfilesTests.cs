@@ -160,6 +160,44 @@ namespace Sereno.Tests.Storage
         }
 
         [Fact]
+        public void GuardarPreferenciasAviso_SeConservanAlReabrir()
+        {
+            _almacen.GuardarPreferenciasAviso(new PreferenciasAviso { Canal = CanalAviso.SoloSistema, BajoEstimulo = true });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            PreferenciasAviso preferencias = recargado.ObtenerPreferenciasAviso();
+            Assert.Equal(CanalAviso.SoloSistema, preferencias.Canal);
+            Assert.True(preferencias.BajoEstimulo);
+        }
+
+        [Fact]
+        public void ExportarTexto_IncluyePerfilesYConfiguracionSinSecretos()
+        {
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+
+            string texto = _almacen.ExportarTexto();
+
+            Assert.Contains("Lucía", texto);
+            Assert.Contains("Bloque: 25 minutos", texto);
+            Assert.DoesNotContain(perfil.HashContrasena, texto);
+            Assert.DoesNotContain(perfil.HashClave, texto);
+            Assert.DoesNotContain(perfil.SalContrasena, texto);
+        }
+
+        [Fact]
+        public void BorrarTodo_EliminaLaCarpetaDeSereno()
+        {
+            _almacen.Crear("Lucía", "contrasena123");
+
+            _almacen.BorrarTodo();
+
+            Assert.False(Directory.Exists(_carpetaTemporal));
+            Assert.Empty(_almacen.Perfiles);
+        }
+
+        [Fact]
         public void RecordarUltimo_NoPierdeLasPreferenciasGuardadas()
         {
             _almacen.GuardarPreferencias(new PreferenciasVisuales { AltoContraste = true });

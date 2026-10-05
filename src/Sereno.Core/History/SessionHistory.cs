@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sereno.Core.History
 {
@@ -8,16 +9,35 @@ namespace Sereno.Core.History
         Descartado,
     }
 
-    public sealed record AccionAvisoRegistrada(AccionAviso Accion, int MinutosBloque);
+    public enum TipoEntrada
+    {
+        BloqueCompletado,
+        PausaTomada,
+        AvisoPospuesto,
+        AvisoDescartado,
+    }
 
-    /// <summary>Acciones sobre los avisos de la sesión actual, en el orden en que ocurrieron.</summary>
+    public sealed record EntradaSesion(TipoEntrada Tipo, int Minutos);
+
+    /// <summary>
+    /// Registro de lo que pasó en la sesión actual. Deshacer quita la última entrada registrada.
+    /// Vive solo en memoria: no se persiste entre sesiones.
+    /// </summary>
     public sealed class SessionHistory
     {
-        private readonly List<AccionAvisoRegistrada> _acciones = new();
+        private readonly Pila<EntradaSesion> _pila = new();
 
-        public IReadOnlyList<AccionAvisoRegistrada> Acciones => _acciones;
+        /// <summary>Entradas de la más reciente a la más antigua.</summary>
+        public IReadOnlyList<EntradaSesion> Entradas => _pila.DelMasReciente();
 
-        public void RegistrarAccion(AccionAviso accion, int minutosBloque) =>
-            _acciones.Add(new AccionAvisoRegistrada(accion, minutosBloque));
+        public void Registrar(TipoEntrada tipo, int minutos) => _pila.Apilar(new EntradaSesion(tipo, minutos));
+
+        public void RegistrarAviso(AccionAviso accion, int minutosBloque) => Registrar(
+            accion == AccionAviso.Pospuesto ? TipoEntrada.AvisoPospuesto : TipoEntrada.AvisoDescartado,
+            minutosBloque);
+
+        public bool DeshacerUltima() => _pila.Desapilar(out _);
+
+        public int Contar(TipoEntrada tipo) => Entradas.Count(e => e.Tipo == tipo);
     }
 }
