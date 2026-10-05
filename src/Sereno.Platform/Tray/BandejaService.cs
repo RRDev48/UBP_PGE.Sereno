@@ -19,6 +19,7 @@ namespace Sereno.Platform.Tray
 
         public event EventHandler<PerfilEventArgs>? CierreDeSesionSolicitado;
         public event EventHandler? SalidaSolicitada;
+        public event EventHandler? ConfiguracionSolicitada;
 
         /// <param name="iconoStream">
         /// Contenido del ícono a mostrar en la bandeja, o null para usar el ícono por defecto
@@ -40,12 +41,15 @@ namespace Sereno.Platform.Tray
                 if (_perfil is not null)
                     CierreDeSesionSolicitado?.Invoke(this, new PerfilEventArgs(_perfil));
             });
+            var itemConfiguracion = new Forms.ToolStripMenuItem("Configuración…", null,
+                (_, _) => ConfiguracionSolicitada?.Invoke(this, EventArgs.Empty));
             var itemSalir = new Forms.ToolStripMenuItem("Salir de Sereno", null,
                 (_, _) => SalidaSolicitada?.Invoke(this, EventArgs.Empty));
 
             var menu = new Forms.ContextMenuStrip();
             menu.Items.Add(_itemPerfil);
             menu.Items.Add(new Forms.ToolStripSeparator());
+            menu.Items.Add(itemConfiguracion);
             menu.Items.Add(_itemCerrarSesion);
             menu.Items.Add(itemSalir);
             _icono.ContextMenuStrip = menu;

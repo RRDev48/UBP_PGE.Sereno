@@ -48,6 +48,7 @@ namespace Sereno.Desktop
             _bandeja = new BandejaService(ObtenerStreamDelIcono());
             _bandeja.CierreDeSesionSolicitado += Bandeja_CierreDeSesionSolicitado;
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
+            _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
 
             var splash = new SplashWindow(_almacen);
             splash.CargaCompleta += (_, _) => Decidir();
