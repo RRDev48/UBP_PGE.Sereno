@@ -138,6 +138,28 @@ namespace Sereno.Tests.Storage
         }
 
         [Fact]
+        public void GuardarPreferencias_EscalaYEspaciadoSeConservanAlReabrir()
+        {
+            _almacen.GuardarPreferencias(new PreferenciasVisuales { EspaciadoAmplio = true, Escala = 150 });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            PreferenciasVisuales preferencias = recargado.ObtenerPreferencias();
+            Assert.True(preferencias.EspaciadoAmplio);
+            Assert.Equal(150, preferencias.Escala);
+        }
+
+        [Fact]
+        public void GuardarPreferencias_EscalaInvalida_LanzaExcepcionSinEscribir()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                _almacen.GuardarPreferencias(new PreferenciasVisuales { Escala = 110 }));
+
+            Assert.Equal(100, _almacen.ObtenerPreferencias().Escala);
+        }
+
+        [Fact]
         public void RecordarUltimo_NoPierdeLasPreferenciasGuardadas()
         {
             _almacen.GuardarPreferencias(new PreferenciasVisuales { AltoContraste = true });

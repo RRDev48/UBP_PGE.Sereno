@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using Sereno.Core.Modelos;
 using Sereno.Core.Timing;
 using Sereno.Desktop.Servicios;
@@ -28,6 +29,8 @@ namespace Sereno.Desktop.Vistas
             PreferenciasVisuales preferencias = _almacen.ObtenerPreferencias();
             FuenteLectura.IsChecked = preferencias.FuenteLectura;
             AltoContraste.IsChecked = preferencias.AltoContraste;
+            EspaciadoAmplio.IsChecked = preferencias.EspaciadoAmplio;
+            Escala.SelectedIndex = preferencias.Escala switch { 125 => 1, 150 => 2, _ => 0 };
 
             Loaded += (_, _) => Bloque.EnfocarCampo();
         }
@@ -56,6 +59,10 @@ namespace Sereno.Desktop.Vistas
             {
                 FuenteLectura = FuenteLectura.IsChecked == true,
                 AltoContraste = AltoContraste.IsChecked == true,
+                EspaciadoAmplio = EspaciadoAmplio.IsChecked == true,
+                Escala = Escala.SelectedItem is ComboBoxItem { Tag: string etiqueta } && int.TryParse(etiqueta, out int valor)
+                    ? valor
+                    : PreferenciasVisuales.EscalaPorDefecto,
             };
 
             try

@@ -4,7 +4,7 @@
         xmlns:c="clr-namespace:Sereno.Desktop.Controles"
         Title="Sereno · Configuración" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
         Icon="/Recursos/sereno.ico">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" LayoutTransform="{DynamicResource EscalaVisual}">
         <StackPanel Margin="32,28,32,24">
             <c:Marca/>
 
@@ -24,6 +24,16 @@
             <CheckBox x:Name="AltoContraste" Margin="0,0,0,12">
                 <TextBlock Text="Alto contraste" TextWrapping="Wrap"/>
             </CheckBox>
+            <CheckBox x:Name="EspaciadoAmplio" Margin="0,0,0,12">
+                <TextBlock Text="Espaciado amplio entre líneas" TextWrapping="Wrap"/>
+            </CheckBox>
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Tamaño del texto"/>
+            <ComboBox x:Name="Escala" AutomationProperties.Name="Tamaño del texto"
+                      HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,12">
+                <ComboBoxItem Content="100 %" Tag="100"/>
+                <ComboBoxItem Content="125 %" Tag="125"/>
+                <ComboBoxItem Content="150 %" Tag="150"/>
+            </ComboBox>
 
             <Button Style="{StaticResource BotonPrimario}" Content="Guardar"
                     IsDefault="True" Margin="0,12,0,0" Click="Guardar_Click"/>

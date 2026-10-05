@@ -4,7 +4,7 @@
         xmlns:c="clr-namespace:Sereno.Desktop.Controles"
         Title="Sereno · Crear perfil" Style="{StaticResource VentanaSereno}" WindowStartupLocation="CenterScreen"
         Icon="/Recursos/sereno.ico">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" LayoutTransform="{DynamicResource EscalaVisual}">
         <StackPanel Margin="32,28,32,24">
             <c:Marca/>
             <c:IndicadorPasos x:Name="Pasos"/>

@@ -221,6 +221,9 @@ namespace Sereno.Platform.Storage
 
         public void GuardarPreferencias(PreferenciasVisuales preferencias)
         {
+            if (!PreferenciasVisuales.EsEscalaValida(preferencias.Escala))
+                throw new ArgumentOutOfRangeException(nameof(preferencias), "La escala debe ser 100, 125 o 150.");
+
             Configuracion copia;
             lock (_candado)
             {
@@ -242,6 +245,8 @@ namespace Sereno.Platform.Storage
         {
             FuenteLectura = origen.FuenteLectura,
             AltoContraste = origen.AltoContraste,
+            EspaciadoAmplio = origen.EspaciadoAmplio,
+            Escala = origen.Escala,
         };
 
         private void EscribirConfiguracion(Configuracion config)

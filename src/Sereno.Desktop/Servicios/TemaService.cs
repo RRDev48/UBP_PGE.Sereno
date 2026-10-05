@@ -46,6 +46,19 @@ namespace Sereno.Desktop.Servicios
             diccionarios.Insert(0, nuevo);
 
             AplicarFuente(app, preferencias.FuenteLectura);
+            AplicarTamano(app, preferencias);
+        }
+
+        private static void AplicarTamano(Application app, PreferenciasVisuales preferencias)
+        {
+            int escala = PreferenciasVisuales.EsEscalaValida(preferencias.Escala)
+                ? preferencias.Escala
+                : PreferenciasVisuales.EscalaPorDefecto;
+            double factorEscala = escala / 100.0;
+
+            app.Resources["EscalaVisual"] = new ScaleTransform(factorEscala, factorEscala);
+            var espaciado = (EspaciadoVisual)app.FindResource("EspaciadoVisual");
+            espaciado.Factor = preferencias.EspaciadoAmplio ? 1.5 : 0.0;
         }
 
         private static bool EsDiccionarioDeTema(string ruta) =>
