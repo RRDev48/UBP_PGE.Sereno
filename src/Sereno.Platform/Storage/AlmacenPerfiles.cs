@@ -213,6 +213,60 @@ namespace Sereno.Platform.Storage
             EscribirConfiguracion(copia);
         }
 
+        public PreferenciasAviso ObtenerPreferenciasAviso()
+        {
+            lock (_candado)
+                return new PreferenciasAviso { Canal = _config.Aviso.Canal, BajoEstimulo = _config.Aviso.BajoEstimulo };
+        }
+
+        public void GuardarPreferenciasAviso(PreferenciasAviso preferencias)
+        {
+            Configuracion copia;
+            lock (_candado)
+            {
+                _config.Aviso = new PreferenciasAviso { Canal = preferencias.Canal, BajoEstimulo = preferencias.BajoEstimulo };
+                copia = CopiarConfiguracion();
+            }
+            EscribirConfiguracion(copia);
+        }
+
+        /// <summary>
+        /// Texto legible con perfiles (sin hashes ni claves) y configuración. Es lo que la persona
+        /// puede llevarse o revisar; no incluye nada que sirva para entrar a un perfil.
+        /// </summary>
+        public string ExportarTexto()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Sereno · Exportación de datos");
+            sb.AppendLine($"Generada: {DateTime.Now:dd/MM/yyyy HH:mm}");
+            sb.AppendLine();
+            sb.AppendLine("Perfiles");
+            lock (_candado)
+            {
+                foreach (Perfil p in _perfiles.Where(p => !p.EsCompartido))
+                    sb.AppendLine($"  - {p.Nombre} (creado el {p.CreadoEn:dd/MM/yyyy}, abrir sin contraseña: {(p.AbrirSinContrasena ? "sí" : "no")})");
+                sb.AppendLine();
+                sb.AppendLine("Configuración");
+                sb.AppendLine($"  - Bloque: {_config.MinutosBloque} minutos");
+                sb.AppendLine($"  - Pausa: {_config.MinutosPausa} minutos");
+                sb.AppendLine($"  - Canal del aviso: {_config.Aviso.Canal}");
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>Borra toda la carpeta de Sereno. Es irreversible: quien llama debe confirmar antes.</summary>
+        public void BorrarTodo()
+        {
+            string carpetaBase = Path.GetDirectoryName(_archivoConfig)!;
+            if (Directory.Exists(carpetaBase))
+                Directory.Delete(carpetaBase, recursive: true);
+            lock (_candado)
+            {
+                _perfiles.Clear();
+                _config = new Configuracion();
+            }
+        }
+
         public PreferenciasVisuales ObtenerPreferencias()
         {
             lock (_candado)
@@ -239,6 +293,7 @@ namespace Sereno.Platform.Storage
             MinutosBloque = _config.MinutosBloque,
             MinutosPausa = _config.MinutosPausa,
             Visuales = CopiarPreferencias(_config.Visuales),
+            Aviso = new PreferenciasAviso { Canal = _config.Aviso.Canal, BajoEstimulo = _config.Aviso.BajoEstimulo },
         };
 
         private static PreferenciasVisuales CopiarPreferencias(PreferenciasVisuales origen) => new()
