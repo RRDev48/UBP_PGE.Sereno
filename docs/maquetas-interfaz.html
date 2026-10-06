@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sereno · Maquetas de interfaz</title>
+<style>
+  :root {
+    --fondo: #F6F7FA; --texto: #1B2340; --secundario: #4A5270; --acento: #8A5300;
+    --primario: #1B2340; --aviso: #FBEBD0; --borde: #6B7390; --foco: #8A5300; --tarjeta: #FFFFFF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #161B2E; --texto: #F6F7FA; --secundario: #B9C0D6; --acento: #F0B85A;
+      --primario: #F6F7FA; --aviso: #2A2F45; --borde: #8A92AE; --foco: #F0B85A; --tarjeta: #1F2540;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #161B2E; --texto: #F6F7FA; --secundario: #B9C0D6; --acento: #F0B85A;
+    --primario: #F6F7FA; --aviso: #2A2F45; --borde: #8A92AE; --foco: #F0B85A; --tarjeta: #1F2540;
+  }
+  body { margin: 0; background: var(--fondo); color: var(--texto);
+         font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
+  main { display: grid; gap: 36px; padding: 32px; max-width: 1000px; margin: auto; }
+  h1 { font-size: 22px; margin: 0; }
+  h2 { font-size: 17px; margin: 0 0 14px; }
+  p.nota { color: var(--secundario); font-size: 14px; margin: 6px 0 0; }
+  .pantalla { border: 1px dashed var(--borde); border-radius: 12px; padding: 24px; }
+  .pantalla > h2 { color: var(--secundario); font-weight: 600; font-size: 15px; }
+  .tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .tarjeta h3 { font-size: 15px; margin: 0 0 10px; }
+  .fila { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: 10px; font: inherit;
+           font-size: 15px; cursor: pointer; border: 1.5px solid var(--borde); background: transparent; color: var(--texto); }
+  button.primario { background: var(--primario); color: var(--fondo); border-color: var(--primario); font-weight: 600; }
+  button.peligro { border-color: #A1261B; color: #A1261B; }
+  button:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+  label.opcion { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; }
+  label.opcion input { width: 22px; height: 22px; }
+  .campo { display: grid; gap: 6px; margin-bottom: 12px; max-width: 320px; }
+  .campo select { min-height: 44px; font: inherit; font-size: 16px; padding: 0 12px; border-radius: 8px;
+           border: 1.5px solid var(--borde); background: var(--fondo); color: var(--texto); }
+  .ayuda { color: var(--secundario); font-size: 13px; }
+  /* Micropausas */
+  .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .micro { border: 1.5px solid var(--borde); border-radius: 12px; padding: 14px; background: var(--fondo); }
+  .micro .icono { font-size: 26px; }
+  .micro .nombre { font-weight: 600; margin: 6px 0 2px; }
+  .micro .duracion { color: var(--secundario); font-size: 13px; margin-bottom: 6px; }
+  .micro p { margin: 0; font-size: 14px; color: var(--secundario); }
+  /* Rutina */
+  ol.pasos { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  ol.pasos li { border: 1.5px solid var(--borde); border-radius: 10px; padding: 12px 14px; min-height: 44px; }
+  ol.pasos li.actual { border: 2px solid var(--foco); background: var(--aviso); font-weight: 600; }
+  ol.pasos li.hecho { color: var(--secundario); }
+  /* Resumen */
+  .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .metrica { border: 1px solid var(--borde); border-radius: 12px; padding: 14px; background: var(--fondo); }
+  .metrica .valor { font-size: 28px; font-weight: 600; }
+  .metrica .etiqueta { font-size: 14px; color: var(--secundario); }
+  ul.acciones-lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  ul.acciones-lista li { display: flex; justify-content: space-between; gap: 8px; align-items: center;
+                         border-bottom: 1px solid var(--borde); padding: 8px 0; min-height: 44px; }
+  /* Confirmación */
+  .dialogo { border: 2px solid #A1261B; border-radius: 12px; padding: 16px; background: var(--tarjeta); }
+  .dialogo p { margin: 0 0 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Maquetas de interfaz</h1>
+    <p class="nota">Para revisar antes de implementar US-B4, US-B5, US-B7, US-C1, US-C2, US-D1, US-D2 y US-D3. No son la versión final.</p>
+  </header>
+
+  <!-- 1. Configuración completa -->
+  <section class="pantalla" aria-labelledby="p-config">
+    <h2 id="p-config">1 · Configuración (B4, B5, B7, B3)</h2>
+
+    <div class="tarjeta">
+      <h3>Canal del aviso (US-B4)</h3>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend class="ayuda" style="margin-bottom:6px">Elegí por qué canal llega el aviso. Se aplica al aviso siguiente.</legend>
+        <label class="opcion"><input type="radio" name="canal" checked> Solo visual (ventana de esquina)</label>
+        <label class="opcion"><input type="radio" name="canal"> Solo hablado (sin ventana)</label>
+        <label class="opcion"><input type="radio" name="canal"> Visual y hablado</label>
+        <label class="opcion"><input type="radio" name="canal"> Solo notificación del sistema</label>
+      </fieldset>
+    </div>
+
+    <div class="tarjeta">
+      <h3>Movimiento y estímulo (US-B5)</h3>
+      <label class="opcion"><input type="checkbox" checked> Modo bajo estímulo: sin movimiento ni parpadeo</label>
+      <p class="ayuda">Se activa solo si Windows tiene las animaciones desactivadas. También puede forzarse con esta casilla.</p>
+    </div>
+
+    <div class="tarjeta">
+      <h3>Lectura y visualización (US-B7)</h3>
+      <label class="opcion"><input type="checkbox"> Fuente para lectura cómoda</label>
+      <label class="opcion"><input type="checkbox"> Alto contraste</label>
+      <label class="opcion"><input type="checkbox"> Espaciado amplio entre líneas</label>
+      <div class="campo">
+        <label for="escala-m">Tamaño del texto</label>
+        <select id="escala-m"><option>100 %</option><option>125 %</option><option>150 %</option></select>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <h3>Datos y privacidad (US-D3)</h3>
+      <p>Tus datos están en: <strong>%APPDATA%\Sereno\</strong>. No salen de esta computadora.</p>
+      <div class="fila">
+        <button type="button">Exportar mis datos</button>
+        <button type="button" class="peligro">Borrar todos los datos</button>
+      </div>
+      <p class="ayuda">Exportar genera un archivo de texto legible. Borrar elimina perfiles, configuración e historial de esta computadora.</p>
+    </div>
+
+    <div class="dialogo" role="alertdialog" aria-labelledby="borrar-titulo">
+      <p id="borrar-titulo"><strong>¿Borrar todos los datos de Sereno?</strong></p>
+      <p class="ayuda">Se eliminan los perfiles, las claves de recuperación y el historial. No se puede deshacer.</p>
+      <div class="fila">
+        <button type="button" class="peligro">Sí, borrar todo</button>
+        <button type="button" class="primario">Cancelar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Pausa: catálogo y rutina -->
+  <section class="pantalla" aria-labelledby="p-pausa">
+    <h2 id="p-pausa">2 · Pausa: catálogo de micropausas y rutina (C1, C2)</h2>
+
+    <div class="tarjeta">
+      <h3>Propuestas para tu pausa de 5 minutos</h3>
+      <p class="ayuda">Se muestran las pausas que entran en la duración configurada. Cada una se identifica por ícono y por texto.</p>
+      <div class="grilla">
+        <div class="micro">
+          <div class="icono" aria-hidden="true">👁️</div>
+          <div class="nombre">Descanso visual 20-20-20</div>
+          <div class="duracion">20 segundos</div>
+          <p>Mirá algo a unos 6 metros de distancia durante 20 segundos.</p>
+        </div>
+        <div class="micro">
+          <div class="icono" aria-hidden="true">🙆</div>
+          <div class="nombre">Estirar el cuello</div>
+          <div class="duracion">1 minuto</div>
+          <p>Llevá la oreja hacia cada hombro, 15 segundos por lado.</p>
+        </div>
+        <div class="micro">
+          <div class="icono" aria-hidden="true">🧍</div>
+          <div class="nombre">Ponerte de pie</div>
+          <div class="duracion">2 minutos</div>
+          <p>Levantate, estirá los brazos y caminá unos pasos.</p>
+        </div>
+        <div class="micro">
+          <div class="icono" aria-hidden="true">🌬️</div>
+          <div class="nombre">Respiración lenta</div>
+          <div class="duracion">2 minutos</div>
+          <p>Inhalá 4 segundos y exhalá 6 segundos, cinco veces.</p>
+        </div>
+        <div class="micro">
+          <div class="icono" aria-hidden="true">💧</div>
+          <div class="nombre">Tomar agua</div>
+          <div class="duracion">1 minuto</div>
+          <p>Servite un vaso de agua y tomalo despacio.</p>
+        </div>
+        <div class="micro">
+          <div class="icono" aria-hidden="true">🧘</div>
+          <div class="nombre">Estirar la espalda</div>
+          <div class="duracion">3 pasos · 30 segundos</div>
+          <p>Rutina guiada en tres pasos. Ver la maqueta de abajo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <h3>Rutina: Estirar la espalda</h3>
+      <ol class="pasos" aria-label="Pasos de la rutina">
+        <li class="hecho">1 · Sentate derecho y soltá los hombros. <span class="ayuda">(hecho)</span></li>
+        <li class="actual" aria-current="step">2 · Llevá los brazos arriba y estirate, 10 segundos.</li>
+        <li>3 · Inclinate hacia cada lado, 10 segundos por lado.</li>
+      </ol>
+      <div class="fila" style="margin-top:14px">
+        <fieldset style="border:0;padding:0;margin:0">
+          <legend class="ayuda">Avance</legend>
+          <label class="opcion"><input type="radio" name="avance" checked> Manual (yo decido cuándo sigo)</label>
+          <label class="opcion"><input type="radio" name="avance"> Automático cada 10 segundos</label>
+        </fieldset>
+      </div>
+      <div class="fila" style="margin-top:12px">
+        <button type="button" class="primario">Siguiente paso</button>
+        <button type="button">Salir de la rutina</button>
+      </div>
+      <p class="ayuda">Salir de la rutina en cualquier momento no muestra mensajes ni cuenta como falta.</p>
+    </div>
+  </section>
+
+  <!-- 3. Resumen de sesión -->
+  <section class="pantalla" aria-labelledby="p-resumen">
+    <h2 id="p-resumen">3 · Resumen de la sesión (D1, D2)</h2>
+
+    <div class="tarjeta">
+      <h3>Sesión de hoy</h3>
+      <div class="metricas">
+        <div class="metrica"><div class="valor">4</div><div class="etiqueta">bloques completados</div></div>
+        <div class="metrica"><div class="valor">3</div><div class="etiqueta">pausas tomadas</div></div>
+        <div class="metrica"><div class="valor">2</div><div class="etiqueta">avisos pospuestos</div></div>
+      </div>
+      <p class="ayuda" style="margin-top:12px">Solo muestra lo que pasó. No califica ni compara con otros días.</p>
+    </div>
+
+    <div class="tarjeta">
+      <h3>Registro de la sesión</h3>
+      <ul class="acciones-lista">
+        <li><span>Bloque de 25 min completado</span>
+            <button type="button">Deshacer</button></li>
+        <li><span>Aviso pospuesto 5 min</span>
+            <button type="button">Deshacer</button></li>
+        <li><span>Bloque de 25 min completado</span>
+            <button type="button">Deshacer</button></li>
+      </ul>
+      <p class="ayuda">Deshacer revierte el último registro. Se puede repetir en orden inverso.</p>
+    </div>
+
+    <div class="fila">
+      <button type="button" class="primario">Cerrar resumen</button>
+    </div>
+    <p class="ayuda">Al cerrar, el resumen no vuelve a aparecer hasta que lo pidas desde la bandeja.</p>
+  </section>
+</main>
+</body>
+</html>

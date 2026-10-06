@@ -1,11 +1,17 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:srv="clr-namespace:Sereno.Desktop.Servicios">
 
     <!-- Tipografías -->
     <FontFamily x:Key="FuenteBase">Segoe UI Variable Text, Segoe UI</FontFamily>
     <FontFamily x:Key="FuenteTitulo">Georgia, Cambria</FontFamily>
     <FontFamily x:Key="FuenteMono">Cascadia Mono, Consolas</FontFamily>
     <FontFamily x:Key="FuenteIconos">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <!-- Preferencias visuales. TemaService las reemplaza según la configuración guardada. -->
+    <ScaleTransform x:Key="EscalaVisual" ScaleX="1" ScaleY="1"/>
+    <srv:EspaciadoVisual x:Key="EspaciadoVisual"/>
+    <srv:InterlineadoConvertidor x:Key="InterlineadoConvertidor"/>
 
     <!-- Íconos (viewbox de 24 × 24) -->
     <Geometry x:Key="GeoLuna">M20,14.5 A8,8 0 0 1 9.5,4 A8,8 0 1 0 20,14.5 Z</Geometry>
@@ -17,7 +23,7 @@
     <Style x:Key="VentanaSereno" TargetType="Window">
         <Setter Property="Background" Value="{DynamicResource Fondo}"/>
         <Setter Property="Foreground" Value="{DynamicResource Texto}"/>
-        <Setter Property="FontFamily" Value="{StaticResource FuenteBase}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource FuenteBase}"/>
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Width" Value="460"/>
         <Setter Property="SizeToContent" Value="Height"/>
@@ -28,7 +34,18 @@
     </Style>
 
     <!-- Textos -->
-    <Style x:Key="Titulo" TargetType="TextBlock">
+    <Style TargetType="TextBlock">
+        <Setter Property="LineHeight">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource InterlineadoConvertidor}">
+                    <Binding Path="FontSize" RelativeSource="{RelativeSource Self}"/>
+                    <Binding Source="{StaticResource EspaciadoVisual}" Path="Factor"/>
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Titulo" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="FontFamily" Value="{StaticResource FuenteTitulo}"/>
         <Setter Property="FontSize" Value="26"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -36,18 +53,18 @@
         <Setter Property="Margin" Value="0,0,0,6"/>
     </Style>
 
-    <Style x:Key="Bajada" TargetType="TextBlock">
+    <Style x:Key="Bajada" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="Foreground" Value="{DynamicResource TextoSecundario}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Margin" Value="0,0,0,20"/>
     </Style>
 
-    <Style x:Key="Etiqueta" TargetType="TextBlock">
+    <Style x:Key="Etiqueta" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Margin" Value="0,0,0,6"/>
     </Style>
 
-    <Style x:Key="Ayuda" TargetType="TextBlock">
+    <Style x:Key="Ayuda" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Foreground" Value="{DynamicResource TextoSecundario}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>

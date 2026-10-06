@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Resource Include="Recursos\sereno.ico" />
+    <Resource Include="Recursos\Fuentes\*.ttf" />
   </ItemGroup>
 
   <ItemGroup>

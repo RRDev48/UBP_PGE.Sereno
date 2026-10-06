@@ -19,6 +19,9 @@ namespace Sereno.Platform.Tray
 
         public event EventHandler<PerfilEventArgs>? CierreDeSesionSolicitado;
         public event EventHandler? SalidaSolicitada;
+        public event EventHandler? ConfiguracionSolicitada;
+        public event EventHandler? PausaSolicitada;
+        public event EventHandler? ResumenSolicitado;
 
         /// <param name="iconoStream">
         /// Contenido del ícono a mostrar en la bandeja, o null para usar el ícono por defecto
@@ -40,12 +43,21 @@ namespace Sereno.Platform.Tray
                 if (_perfil is not null)
                     CierreDeSesionSolicitado?.Invoke(this, new PerfilEventArgs(_perfil));
             });
+            var itemConfiguracion = new Forms.ToolStripMenuItem("Configuración…", null,
+                (_, _) => ConfiguracionSolicitada?.Invoke(this, EventArgs.Empty));
             var itemSalir = new Forms.ToolStripMenuItem("Salir de Sereno", null,
                 (_, _) => SalidaSolicitada?.Invoke(this, EventArgs.Empty));
 
             var menu = new Forms.ContextMenuStrip();
             menu.Items.Add(_itemPerfil);
             menu.Items.Add(new Forms.ToolStripSeparator());
+            var itemPausa = new Forms.ToolStripMenuItem("Proponer una pausa…", null,
+                (_, _) => PausaSolicitada?.Invoke(this, EventArgs.Empty));
+            var itemResumen = new Forms.ToolStripMenuItem("Resumen de la sesión…", null,
+                (_, _) => ResumenSolicitado?.Invoke(this, EventArgs.Empty));
+            menu.Items.Add(itemPausa);
+            menu.Items.Add(itemResumen);
+            menu.Items.Add(itemConfiguracion);
             menu.Items.Add(_itemCerrarSesion);
             menu.Items.Add(itemSalir);
             _icono.ContextMenuStrip = menu;
@@ -67,6 +79,9 @@ namespace Sereno.Platform.Tray
                 "Queda en la bandeja del sistema. Hacé clic derecho en el ícono para ver las opciones.",
                 Forms.ToolTipIcon.None);
         }
+
+        public void MostrarAviso(string titulo, string texto) =>
+            _icono.ShowBalloonTip(5000, titulo, texto, Forms.ToolTipIcon.None);
 
         public void Ocultar()
         {

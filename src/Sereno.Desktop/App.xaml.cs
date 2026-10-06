@@ -2,10 +2,14 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using Sereno.Core.Events;
+using Sereno.Core.History;
 using Sereno.Core.Modelos;
+using Sereno.Core.Timing;
 using Sereno.Desktop.Servicios;
 using Sereno.Desktop.Vistas;
 using Sereno.Platform.Storage;
+using Sereno.Platform.Timing;
 using Sereno.Platform.Tray;
 
 namespace Sereno.Desktop
@@ -27,6 +31,11 @@ namespace Sereno.Desktop
         private Mutex? _instanciaUnica;
         private AlmacenPerfiles _almacen = null!;
         private BandejaService _bandeja = null!;
+        private readonly EventBus _bus = new();
+        private MotorDeBloques _motor = null!;
+        private AvisoFinDeBloque _aviso = null!;
+        private readonly SessionHistory _historial = new();
+        private SubscriptionToken? _avisoFinDeBloque;
         private Window? _ventanaActual;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -42,20 +51,36 @@ namespace Sereno.Desktop
                 return;
             }
 
-            TemaService.Aplicar(this);
+            // Tema del sistema hasta que se lean las preferencias guardadas.
+            TemaService.Aplicar(this, new PreferenciasVisuales());
 
             _almacen = new AlmacenPerfiles(Rutas.Base);
             _bandeja = new BandejaService(ObtenerStreamDelIcono());
             _bandeja.CierreDeSesionSolicitado += Bandeja_CierreDeSesionSolicitado;
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
+            _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
+            _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
+            _bandeja.PausaSolicitada += (_, _) => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
+            _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
+            _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja);
+            _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e =>
+            {
+                _historial.Registrar(TipoEntrada.BloqueCompletado, e.Minutos);
+                _aviso.Mostrar(e.Minutos);
+            });
 
             var splash = new SplashWindow(_almacen);
-            splash.CargaCompleta += (_, _) => Decidir();
+            splash.CargaCompleta += (_, _) =>
+            {
+                TemaService.Aplicar(this, _almacen.ObtenerPreferencias());
+                Decidir();
+            };
             Mostrar(splash);
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _motor?.Dispose();
             _bandeja?.Dispose();
             _instanciaUnica?.Dispose();
             base.OnExit(e);
@@ -130,6 +155,7 @@ namespace Sereno.Desktop
         {
             _almacen.RecordarUltimo(perfil);
             _bandeja.Mostrar(perfil);
+            _motor.Iniciar(_almacen.ObtenerDuraciones().MinutosBloque);
             CerrarVentanaActual();
 
             // Acá se conecta el resto de Sereno (temporizador de pausas, historial del perfil).
@@ -137,6 +163,7 @@ namespace Sereno.Desktop
 
         private void Bandeja_CierreDeSesionSolicitado(object? sender, PerfilEventArgs e)
         {
+            _motor.Detener();
             _bandeja.Ocultar();
             MostrarAccesoTrasCerrarSesion(e.Perfil);
         }

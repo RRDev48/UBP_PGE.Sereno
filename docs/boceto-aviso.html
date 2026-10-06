@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sereno · Boceto del aviso (E-B0)</title>
+<style>
+  :root {
+    --fondo: #F6F7FA; --texto: #1B2340; --secundario: #4A5270; --acento: #8A5300;
+    --primario: #1B2340; --aviso: #FBEBD0; --borde: #6B7390; --foco: #8A5300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #161B2E; --texto: #F6F7FA; --secundario: #B9C0D6; --acento: #F0B85A;
+      --primario: #F6F7FA; --aviso: #2A2F45; --borde: #8A92AE; --foco: #F0B85A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #161B2E; --texto: #F6F7FA; --secundario: #B9C0D6; --acento: #F0B85A;
+    --primario: #F6F7FA; --aviso: #2A2F45; --borde: #8A92AE; --foco: #F0B85A;
+  }
+  body { margin: 0; background: var(--fondo); color: var(--texto);
+         font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
+  main { display: grid; gap: 40px; padding: 32px; max-width: 980px; margin: auto; }
+  h1 { font-size: 20px; margin: 0; }
+  p.nota { color: var(--secundario); font-size: 14px; margin: 4px 0 0; }
+  .escenario { border: 1px dashed var(--borde); border-radius: 12px; padding: 24px; }
+  .escenario h2 { font-size: 15px; margin: 0 0 16px; color: var(--secundario); font-weight: 600; }
+
+  /* Aviso: no bloqueante, esquina inferior, sin robar el foco */
+  .aviso { width: 340px; background: var(--aviso); border-radius: 14px; padding: 18px 20px;
+           box-shadow: 0 6px 22px rgba(0,0,0,.18); }
+  .aviso .titulo { font-size: 17px; font-weight: 600; margin: 0 0 4px; }
+  .aviso .cuerpo { font-size: 15px; color: var(--secundario); margin: 0 0 14px; line-height: 1.5; }
+  .acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+  button { min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: 10px; font: inherit;
+           font-size: 15px; cursor: pointer; border: 1.5px solid var(--borde); background: transparent; color: var(--texto); }
+  button.primario { background: var(--primario); color: var(--fondo); border-color: var(--primario); font-weight: 600; }
+  button:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
+  /* Configuración: mismas opciones que ConfiguracionWindow */
+  .campo { display: grid; gap: 6px; margin-bottom: 14px; max-width: 320px; }
+  .campo label { font-size: 15px; font-weight: 600; }
+  .campo input, .campo select { min-height: 44px; font: inherit; font-size: 16px; padding: 0 12px;
+           border-radius: 8px; border: 1.5px solid var(--borde); background: var(--fondo); color: var(--texto); }
+  .campo small { color: var(--secundario); font-size: 13px; }
+  .casilla { display: flex; gap: 10px; align-items: center; font-size: 15px; margin-bottom: 12px; min-height: 44px; }
+  .casilla input { width: 22px; height: 22px; }
+  .tema-control { font-size: 13px; color: var(--secundario); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Boceto del aviso y la configuración</h1>
+    <p class="nota">Maqueta para revisar la disposición antes de implementar US-B1, US-B2 y US-B7. No es la versión final.</p>
+  </header>
+
+  <section class="escenario" aria-labelledby="e-aviso">
+    <h2 id="e-aviso">Aviso al terminar un bloque (US-B1, US-B2)</h2>
+    <div class="aviso" role="status" aria-live="polite">
+      <p class="titulo">Bloque terminado</p>
+      <p class="cuerpo">Tomá una pausa de 5 minutos. Podés posponerla o descartarla.</p>
+      <div class="acciones">
+        <button class="primario" type="button">Empezar pausa</button>
+        <button type="button">Posponer 5 min</button>
+        <button type="button">Descartar</button>
+      </div>
+    </div>
+    <p class="nota">Se muestra en una esquina y no toma el foco. Se puede operar con Tab sin perder lo que se está escribiendo.</p>
+  </section>
+
+  <section class="escenario" aria-labelledby="e-config">
+    <h2 id="e-config">Configuración (ConfiguracionWindow)</h2>
+    <div class="campo">
+      <label for="bloque">Bloque de foco (minutos)</label>
+      <input id="bloque" type="text" inputmode="numeric" value="25" maxlength="2">
+      <small>Entre 5 y 90 minutos.</small>
+    </div>
+    <div class="campo">
+      <label for="pausa">Pausa (minutos)</label>
+      <input id="pausa" type="text" inputmode="numeric" value="5" maxlength="2">
+      <small>Entre 1 y 30 minutos.</small>
+    </div>
+    <div class="campo">
+      <label for="escala">Tamaño del texto</label>
+      <select id="escala"><option>100 %</option><option>125 %</option><option>150 %</option></select>
+    </div>
+    <label class="casilla"><input type="checkbox"> Fuente para lectura cómoda</label>
+    <label class="casilla"><input type="checkbox"> Alto contraste</label>
+    <label class="casilla"><input type="checkbox"> Espaciado amplio entre líneas</label>
+    <button class="primario" type="button">Guardar</button>
+    <button type="button">Cancelar</button>
+  </section>
+</main>
+</body>
+</html>
