@@ -23,6 +23,16 @@ namespace Sereno.Core.Timing
 
         public BlockState Estado { get; private set; } = BlockState.Detenido;
 
+        public TimeSpan TiempoRestante
+        {
+            get
+            {
+                if (Estado != BlockState.EnCurso) return TimeSpan.Zero;
+                TimeSpan restante = TimeSpan.FromMinutes(_minutos) - (_reloj.Ahora - _inicio);
+                return restante > TimeSpan.Zero ? restante : TimeSpan.Zero;
+            }
+        }
+
         public void Iniciar(int minutos)
         {
             if (!Duraciones.EsBloqueValido(minutos))

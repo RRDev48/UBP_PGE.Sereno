@@ -60,6 +60,7 @@ namespace Sereno.Desktop
             _bandeja.SalidaSolicitada += (_, _) => Shutdown();
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
             _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
+            _motor.EstadoCambio += (_, _) => _bandeja.ActualizarEstado(_motor.Estado, _motor.MinutosRestantes);
             _bandeja.PausaSolicitada += (_, _) => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
             _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
             _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja);
@@ -157,6 +158,8 @@ namespace Sereno.Desktop
             _bandeja.Mostrar(perfil);
             _motor.Iniciar(_almacen.ObtenerDuraciones().MinutosBloque);
             CerrarVentanaActual();
+            new AvisoBreveWindow("Sereno está activo",
+                "Queda en la bandeja del sistema. Hacé clic derecho en el ícono para ver las opciones.").Show();
 
             // Acá se conecta el resto de Sereno (temporizador de pausas, historial del perfil).
         }

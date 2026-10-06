@@ -79,6 +79,29 @@ namespace Sereno.Tests.Timing
         }
 
         [Fact]
+        public void TiempoRestante_DescuentaLoTranscurrido()
+        {
+            var (timer, reloj, _) = Preparar();
+            timer.Iniciar(25);
+
+            reloj.Avanzar(TimeSpan.FromMinutes(10));
+
+            Assert.Equal(TimeSpan.FromMinutes(15), timer.TiempoRestante);
+        }
+
+        [Fact]
+        public void TiempoRestante_DetenidoOVencido_EsCero()
+        {
+            var (timer, reloj, _) = Preparar();
+            Assert.Equal(TimeSpan.Zero, timer.TiempoRestante);
+
+            timer.Iniciar(5);
+            reloj.Avanzar(TimeSpan.FromMinutes(7));
+
+            Assert.Equal(TimeSpan.Zero, timer.TiempoRestante);
+        }
+
+        [Fact]
         public void Iniciar_DuracionFueraDeRango_LanzaExcepcion()
         {
             var (timer, _, _) = Preparar();

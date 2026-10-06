@@ -14,6 +14,8 @@ namespace Sereno.Desktop.Servicios
         private readonly BlockTimer _timer;
         private readonly Dispatcher _despachador;
         private readonly DispatcherTimer _tic;
+        private BlockState _ultimoEstado = BlockState.Detenido;
+        private int _ultimosMinutos;
 
         public MotorDeBloques(BlockTimer timer)
         {
@@ -24,16 +26,25 @@ namespace Sereno.Desktop.Servicios
             SystemEvents.PowerModeChanged += Energia_Cambio;
         }
 
+        /// <summary>Se dispara cuando cambian el estado o los minutos restantes.</summary>
+        public event EventHandler? EstadoCambio;
+
+        public BlockState Estado => _timer.Estado;
+
+        public int MinutosRestantes => (int)Math.Ceiling(_timer.TiempoRestante.TotalMinutes);
+
         public void Iniciar(int minutos)
         {
             _timer.Iniciar(minutos);
             _tic.Start();
+            AvisarSiCambio();
         }
 
         public void Detener()
         {
             _timer.Detener();
             _tic.Stop();
+            AvisarSiCambio();
         }
 
         public void Dispose()
@@ -53,6 +64,17 @@ namespace Sereno.Desktop.Servicios
             _timer.Verificar();
             if (_timer.Estado != BlockState.EnCurso)
                 _tic.Stop();
+            AvisarSiCambio();
+        }
+
+        private void AvisarSiCambio()
+        {
+            int minutos = MinutosRestantes;
+            if (Estado == _ultimoEstado && minutos == _ultimosMinutos) return;
+
+            _ultimoEstado = Estado;
+            _ultimosMinutos = minutos;
+            EstadoCambio?.Invoke(this, EventArgs.Empty);
         }
     }
 }
