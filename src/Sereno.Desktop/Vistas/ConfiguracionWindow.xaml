@@ -43,7 +43,9 @@
             <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
                          MinHeight="44" Margin="0,0,0,4"/>
             <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
-                         MinHeight="44" Margin="0,0,0,12"/>
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
+                       Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
             <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,12">
                 <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
             </CheckBox>

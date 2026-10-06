@@ -4,6 +4,7 @@ using Sereno.Core.History;
 using Sereno.Core.Modelos;
 using Sereno.Desktop.Vistas;
 using Sereno.Platform.Notifications;
+using Sereno.Platform.Speech;
 using Sereno.Platform.Storage;
 using Sereno.Platform.Tray;
 
@@ -13,6 +14,7 @@ namespace Sereno.Desktop.Servicios
     /// Avisa al terminar un bloque por el canal elegido en la configuración y registra lo que la
     /// persona hace con el aviso. El canal visual espera si hay pantalla completa o presentación
     /// (riesgo R3) y desiste a los 5 minutos. Posponer lo vuelve a mostrar a los 5 minutos.
+    /// La voz se usa solo si el canal la incluye y hay una voz en español; descartar la corta.
     /// </summary>
     public sealed class AvisoFinDeBloque
     {
@@ -23,17 +25,19 @@ namespace Sereno.Desktop.Servicios
         private readonly SessionHistory _historial;
         private readonly AlmacenPerfiles _almacen;
         private readonly BandejaService _bandeja;
+        private readonly LectorVoz _lector;
         private readonly DispatcherTimer _reintento = new() { Interval = Reintento };
         private readonly DispatcherTimer _posponer = new() { Interval = EsperaPosponer };
         private int _minutos;
         private DateTime _vence;
         private AvisoWindow? _ventanaActual;
 
-        public AvisoFinDeBloque(SessionHistory historial, AlmacenPerfiles almacen, BandejaService bandeja)
+        public AvisoFinDeBloque(SessionHistory historial, AlmacenPerfiles almacen, BandejaService bandeja, LectorVoz lector)
         {
             _historial = historial;
             _almacen = almacen;
             _bandeja = bandeja;
+            _lector = lector;
             _reintento.Tick += (_, _) => Intentar();
             _posponer.Tick += (_, _) =>
             {
@@ -47,23 +51,25 @@ namespace Sereno.Desktop.Servicios
             _minutos = minutos;
             _vence = DateTime.UtcNow + Plazo;
             _posponer.Stop();
-            Intentar();
+
+            CanalAviso canal = CanalesAviso.Efectivo(
+                _almacen.ObtenerPreferenciasAviso().Canal, LectorVoz.HayVozEnEspanol());
+
+            if (canal == CanalAviso.SoloSistema)
+            {
+                _bandeja.MostrarAviso("Bloque terminado", $"Completaste {minutos} minutos de foco.");
+                return;
+            }
+
+            if (CanalesAviso.UsaVoz(canal))
+                _lector.Hablar($"Bloque terminado. Tomá una pausa. Completaste {minutos} minutos de foco.");
+
+            if (CanalesAviso.UsaVentana(canal))
+                Intentar();
         }
 
         private void Intentar()
         {
-            CanalAviso canal = _almacen.ObtenerPreferenciasAviso().Canal;
-
-            switch (canal)
-            {
-                case CanalAviso.SoloSistema:
-                    _bandeja.MostrarAviso("Bloque terminado", $"Completaste {_minutos} minutos de foco.");
-                    return;
-                case CanalAviso.SoloHablado:
-                    // La voz llega con US-B3; hasta entonces este canal no muestra nada.
-                    return;
-            }
-
             if (EstadoPresentacion.PantallaOcupada())
             {
                 if (DateTime.UtcNow >= _vence)
@@ -82,7 +88,9 @@ namespace Sereno.Desktop.Servicios
         private void Resolver(AccionAviso accion)
         {
             _historial.RegistrarAviso(accion, _minutos);
-            if (accion == AccionAviso.Pospuesto)
+            if (accion == AccionAviso.Descartado)
+                _lector.Callar();
+            else
                 _posponer.Start();
         }
     }

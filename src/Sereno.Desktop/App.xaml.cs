@@ -8,6 +8,7 @@ using Sereno.Core.Modelos;
 using Sereno.Core.Timing;
 using Sereno.Desktop.Servicios;
 using Sereno.Desktop.Vistas;
+using Sereno.Platform.Speech;
 using Sereno.Platform.Storage;
 using Sereno.Platform.Timing;
 using Sereno.Platform.Tray;
@@ -35,6 +36,7 @@ namespace Sereno.Desktop
         private MotorDeBloques _motor = null!;
         private AvisoFinDeBloque _aviso = null!;
         private readonly SessionHistory _historial = new();
+        private LectorVoz _lector = null!;
         private SubscriptionToken? _avisoFinDeBloque;
         private Window? _ventanaActual;
 
@@ -63,7 +65,8 @@ namespace Sereno.Desktop
             _motor.EstadoCambio += (_, _) => _bandeja.ActualizarEstado(_motor.Estado, _motor.MinutosRestantes);
             _bandeja.PausaSolicitada += (_, _) => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
             _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
-            _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja);
+            _lector = new LectorVoz();
+            _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja, _lector);
             _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e =>
             {
                 _historial.Registrar(TipoEntrada.BloqueCompletado, e.Minutos);
@@ -81,6 +84,7 @@ namespace Sereno.Desktop
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _lector?.Dispose();
             _motor?.Dispose();
             _bandeja?.Dispose();
             _instanciaUnica?.Dispose();
