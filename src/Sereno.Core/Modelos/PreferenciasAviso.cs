@@ -15,6 +15,11 @@ namespace Sereno.Core.Modelos
 
         /// <summary>Fuerza el modo sin movimiento aunque Windows tenga las animaciones activas.</summary>
         public bool BajoEstimulo { get; set; }
+
+        /// <summary>Segundos mínimos que el aviso visual permanece antes de cerrarse solo (10 a 60).</summary>
+        public int SegundosVisible { get; set; } = 10;
+
+        public static bool EsSegundosValido(int segundos) => segundos is >= 10 and <= 60;
     }
 }
 

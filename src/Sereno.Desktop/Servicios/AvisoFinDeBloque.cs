@@ -81,7 +81,7 @@ namespace Sereno.Desktop.Servicios
 
             _reintento.Stop();
             _ventanaActual?.Close();
-            _ventanaActual = new AvisoWindow(_minutos, Resolver);
+            _ventanaActual = new AvisoWindow(_minutos, _almacen.ObtenerPreferenciasAviso().SegundosVisible, Resolver);
             _ventanaActual.Show();
         }
 

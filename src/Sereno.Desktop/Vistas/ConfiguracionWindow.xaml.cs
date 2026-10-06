@@ -51,6 +51,10 @@ namespace Sereno.Desktop.Vistas
                 _ => CanalVisual,
             }).IsChecked = true;
             BajoEstimulo.IsChecked = aviso.BajoEstimulo;
+            SegundosVisible.SelectedIndex = aviso.SegundosVisible switch
+            {
+                15 => 1, 20 => 2, 30 => 3, 45 => 4, 60 => 5, _ => 0,
+            };
 
             UbicacionDatos.Text = $"Tus datos están en {Rutas.Base}. No salen de esta computadora.";
 
@@ -87,7 +91,14 @@ namespace Sereno.Desktop.Vistas
                     : PreferenciasVisuales.EscalaPorDefecto,
             };
 
-            var aviso = new PreferenciasAviso { Canal = CanalElegido(), BajoEstimulo = BajoEstimulo.IsChecked == true };
+            var aviso = new PreferenciasAviso
+            {
+                Canal = CanalElegido(),
+                BajoEstimulo = BajoEstimulo.IsChecked == true,
+                SegundosVisible = SegundosVisible.SelectedItem is ComboBoxItem { Tag: string tiempo } && int.TryParse(tiempo, out int segundos)
+                    ? segundos
+                    : 10,
+            };
 
             try
             {

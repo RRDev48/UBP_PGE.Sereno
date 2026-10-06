@@ -198,6 +198,25 @@ namespace Sereno.Tests.Storage
         }
 
         [Fact]
+        public void GuardarPreferenciasAviso_TiempoVisibleSeConservaAlReabrir()
+        {
+            _almacen.GuardarPreferenciasAviso(new PreferenciasAviso { SegundosVisible = 45 });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            Assert.Equal(45, recargado.ObtenerPreferenciasAviso().SegundosVisible);
+        }
+
+        [Fact]
+        public void GuardarPreferenciasAviso_TiempoVisibleFueraDeRango_LanzaExcepcion()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                _almacen.GuardarPreferenciasAviso(new PreferenciasAviso { SegundosVisible = 5 }));
+            Assert.Equal(10, _almacen.ObtenerPreferenciasAviso().SegundosVisible);
+        }
+
+        [Fact]
         public void RecordarUltimo_NoPierdeLasPreferenciasGuardadas()
         {
             _almacen.GuardarPreferencias(new PreferenciasVisuales { AltoContraste = true });

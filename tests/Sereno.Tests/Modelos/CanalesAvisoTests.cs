@@ -31,3 +31,19 @@ namespace Sereno.Tests.Modelos
         }
     }
 }
+
+namespace Sereno.Tests.Modelos
+{
+    public class TiempoAvisoTests
+    {
+        [Theory]
+        [InlineData(9, false)]
+        [InlineData(10, true)]
+        [InlineData(60, true)]
+        [InlineData(61, false)]
+        public void EsSegundosValido_RespetaElRangoDe10a60(int segundos, bool esperado)
+        {
+            Assert.Equal(esperado, PreferenciasAviso.EsSegundosValido(segundos));
+        }
+    }
+}
