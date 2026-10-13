@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using Sereno.Core.Modelos;
 using Sereno.Core.Timing;
 using Sereno.Desktop.Servicios;
+using Sereno.Platform.Speech;
 using Sereno.Platform.Storage;
 
 namespace Sereno.Desktop.Vistas
@@ -35,7 +36,14 @@ namespace Sereno.Desktop.Vistas
             Escala.SelectedIndex = visuales.Escala switch { 125 => 1, 150 => 2, _ => 0 };
 
             PreferenciasAviso aviso = _almacen.ObtenerPreferenciasAviso();
-            (aviso.Canal switch
+            bool hayVoz = LectorVoz.HayVozEnEspanol();
+            CanalHablado.IsEnabled = hayVoz;
+            CanalAmbos.IsEnabled = hayVoz;
+            VozAyuda.Text = hayVoz
+                ? "La lectura en voz alta está desactivada por defecto."
+                : "Para leer en voz alta hace falta una voz en español instalada en Windows. " +
+                  "Esas dos opciones están deshabilitadas.";
+            (CanalesAviso.Efectivo(aviso.Canal, hayVoz) switch
             {
                 CanalAviso.SoloHablado => CanalHablado,
                 CanalAviso.VisualYHablado => CanalAmbos,
@@ -43,6 +51,10 @@ namespace Sereno.Desktop.Vistas
                 _ => CanalVisual,
             }).IsChecked = true;
             BajoEstimulo.IsChecked = aviso.BajoEstimulo;
+            SegundosVisible.SelectedIndex = aviso.SegundosVisible switch
+            {
+                15 => 1, 20 => 2, 30 => 3, 45 => 4, 60 => 5, _ => 0,
+            };
 
             UbicacionDatos.Text = $"Tus datos están en {Rutas.Base}. No salen de esta computadora.";
 
@@ -79,7 +91,14 @@ namespace Sereno.Desktop.Vistas
                     : PreferenciasVisuales.EscalaPorDefecto,
             };
 
-            var aviso = new PreferenciasAviso { Canal = CanalElegido(), BajoEstimulo = BajoEstimulo.IsChecked == true };
+            var aviso = new PreferenciasAviso
+            {
+                Canal = CanalElegido(),
+                BajoEstimulo = BajoEstimulo.IsChecked == true,
+                SegundosVisible = SegundosVisible.SelectedItem is ComboBoxItem { Tag: string tiempo } && int.TryParse(tiempo, out int segundos)
+                    ? segundos
+                    : 10,
+            };
 
             try
             {

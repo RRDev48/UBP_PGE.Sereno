@@ -216,7 +216,7 @@ namespace Sereno.Platform.Storage
         public PreferenciasAviso ObtenerPreferenciasAviso()
         {
             lock (_candado)
-                return new PreferenciasAviso { Canal = _config.Aviso.Canal, BajoEstimulo = _config.Aviso.BajoEstimulo };
+                return CopiarAviso(_config.Aviso);
         }
 
         public void GuardarPreferenciasAviso(PreferenciasAviso preferencias)
@@ -224,7 +224,9 @@ namespace Sereno.Platform.Storage
             Configuracion copia;
             lock (_candado)
             {
-                _config.Aviso = new PreferenciasAviso { Canal = preferencias.Canal, BajoEstimulo = preferencias.BajoEstimulo };
+                if (!PreferenciasAviso.EsSegundosValido(preferencias.SegundosVisible))
+                    throw new ArgumentOutOfRangeException(nameof(preferencias), "El aviso debe durar entre 10 y 60 segundos.");
+                _config.Aviso = CopiarAviso(preferencias);
                 copia = CopiarConfiguracion();
             }
             EscribirConfiguracion(copia);
@@ -293,7 +295,14 @@ namespace Sereno.Platform.Storage
             MinutosBloque = _config.MinutosBloque,
             MinutosPausa = _config.MinutosPausa,
             Visuales = CopiarPreferencias(_config.Visuales),
-            Aviso = new PreferenciasAviso { Canal = _config.Aviso.Canal, BajoEstimulo = _config.Aviso.BajoEstimulo },
+            Aviso = CopiarAviso(_config.Aviso),
+        };
+
+        private static PreferenciasAviso CopiarAviso(PreferenciasAviso origen) => new()
+        {
+            Canal = origen.Canal,
+            BajoEstimulo = origen.BajoEstimulo,
+            SegundosVisible = origen.SegundosVisible,
         };
 
         private static PreferenciasVisuales CopiarPreferencias(PreferenciasVisuales origen) => new()

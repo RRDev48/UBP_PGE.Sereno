@@ -43,10 +43,22 @@
             <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
                          MinHeight="44" Margin="0,0,0,4"/>
             <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
-                         MinHeight="44" Margin="0,0,0,12"/>
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
+                       Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
             <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,12">
                 <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
             </CheckBox>
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Tiempo del aviso visual"/>
+            <ComboBox x:Name="SegundosVisible" AutomationProperties.Name="Tiempo del aviso visual"
+                      HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,12">
+                <ComboBoxItem Content="10 segundos" Tag="10"/>
+                <ComboBoxItem Content="15 segundos" Tag="15"/>
+                <ComboBoxItem Content="20 segundos" Tag="20"/>
+                <ComboBoxItem Content="30 segundos" Tag="30"/>
+                <ComboBoxItem Content="45 segundos" Tag="45"/>
+                <ComboBoxItem Content="60 segundos" Tag="60"/>
+            </ComboBox>
 
             <TextBlock Style="{StaticResource Etiqueta}" Text="Datos y privacidad" Margin="0,24,0,10"/>
             <TextBlock x:Name="UbicacionDatos" TextWrapping="Wrap" Margin="0,0,0,10"/>

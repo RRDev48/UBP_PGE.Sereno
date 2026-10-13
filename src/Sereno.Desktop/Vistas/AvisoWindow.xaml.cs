@@ -8,18 +8,17 @@ namespace Sereno.Desktop.Vistas
 {
     /// <summary>
     /// Aviso al terminar un bloque. Aparece en la esquina inferior derecha, no toma el foco, no
-    /// figura en la barra de tareas ni en Alt+Tab, y se cierra sola a los 10 segundos si nadie
+    /// figura en la barra de tareas ni en Alt+Tab, y se cierra sola pasado el tiempo configurado si nadie
     /// actúa. Se opera con clic o con los atajos globales de Ctrl+Alt+P y Ctrl+Alt+D.
     /// </summary>
     public partial class AvisoWindow : Window
     {
         private const int MargenPantalla = 16;
-        private static readonly TimeSpan Duracion = TimeSpan.FromSeconds(10);
 
         private readonly Action<AccionAviso> _alAccion;
         private bool _resuelto;
 
-        public AvisoWindow(int minutos, Action<AccionAviso> alAccion)
+        public AvisoWindow(int minutos, int segundos, Action<AccionAviso> alAccion)
         {
             InitializeComponent();
             _alAccion = alAccion;
@@ -31,7 +30,7 @@ namespace Sereno.Desktop.Vistas
                 () => Resolver(AccionAviso.Pospuesto),
                 () => Resolver(AccionAviso.Descartado));
 
-            var cierre = new DispatcherTimer { Interval = Duracion };
+            var cierre = new DispatcherTimer { Interval = TimeSpan.FromSeconds(segundos) };
             cierre.Tick += (_, _) =>
             {
                 cierre.Stop();
