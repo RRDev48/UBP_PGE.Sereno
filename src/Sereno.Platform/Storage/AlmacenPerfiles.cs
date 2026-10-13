@@ -335,6 +335,37 @@ namespace Sereno.Platform.Storage
             return compartido;
         }
 
+        /// <summary>Cambia el nombre del perfil. No toca la contraseña ni la clave de recuperación.</summary>
+        public void RenombrarPerfil(Perfil perfil, string nuevoNombre)
+        {
+            string nombre = nuevoNombre.Trim();
+            if (nombre.Length == 0)
+                throw new ArgumentException("El nombre no puede estar vacío.", nameof(nuevoNombre));
+
+            lock (_candado)
+            {
+                bool duplicado = _perfiles.Any(p => !p.EsCompartido && p.Id != perfil.Id &&
+                    string.Equals(p.Nombre, nombre, StringComparison.CurrentCultureIgnoreCase));
+                if (duplicado)
+                    throw new InvalidOperationException("Ya hay un perfil con ese nombre en esta computadora.");
+                perfil.Nombre = nombre;
+            }
+            Guardar(perfil);
+        }
+
+        /// <summary>Borra la carpeta completa del perfil (perfil.json y la clave de recuperación). Es irreversible.</summary>
+        public void EliminarPerfil(Perfil perfil)
+        {
+            if (perfil.EsCompartido)
+                throw new InvalidOperationException("El perfil compartido no se puede eliminar.");
+
+            if (Directory.Exists(perfil.Carpeta))
+                Directory.Delete(perfil.Carpeta, recursive: true);
+
+            lock (_candado)
+                _perfiles.RemoveAll(p => p.Id == perfil.Id);
+        }
+
         private static string NombreDeCarpeta(Perfil perfil)
         {
             var sb = new StringBuilder();
