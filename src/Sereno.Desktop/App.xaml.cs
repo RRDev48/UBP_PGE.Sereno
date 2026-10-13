@@ -123,6 +123,7 @@ namespace Sereno.Desktop
             login.RecuperacionSolicitada += (_, a) => MostrarRecuperar(a.Perfil);
             login.CreacionSolicitada += (_, _) => MostrarRegistro(primerUso: false);
             login.UsoSinPerfilSolicitado += (_, _) => EntrarSinPerfil();
+            login.AdministrarPerfilesSolicitado += (_, _) => MostrarAdministrarPerfiles();
             Mostrar(login);
         }
 
@@ -133,6 +134,13 @@ namespace Sereno.Desktop
             registro.VolverSolicitado += (_, _) => Decidir();
             registro.UsoSinPerfilSolicitado += (_, _) => EntrarSinPerfil();
             Mostrar(registro);
+        }
+
+        private void MostrarAdministrarPerfiles()
+        {
+            var administrar = new AdministrarPerfilesWindow(_almacen);
+            administrar.VolverSolicitado += (_, _) => Decidir();
+            Mostrar(administrar);
         }
 
         private void MostrarRecuperar(Perfil perfil)
