@@ -303,6 +303,7 @@ namespace Sereno.Platform.Storage
             Canal = origen.Canal,
             BajoEstimulo = origen.BajoEstimulo,
             SegundosVisible = origen.SegundosVisible,
+            VozId = origen.VozId,
         };
 
         private static PreferenciasVisuales CopiarPreferencias(PreferenciasVisuales origen) => new()

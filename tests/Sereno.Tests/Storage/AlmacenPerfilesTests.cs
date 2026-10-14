@@ -230,6 +230,17 @@ namespace Sereno.Tests.Storage
         }
 
         [Fact]
+        public void GuardarPreferenciasAviso_VozIdSeConservaAlReabrir()
+        {
+            _almacen.GuardarPreferenciasAviso(new PreferenciasAviso { VozId = "Microsoft Pablo" });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            Assert.Equal("Microsoft Pablo", recargado.ObtenerPreferenciasAviso().VozId);
+        }
+
+        [Fact]
         public void RenombrarPerfil_CambiaElNombreYPersisteTrasRecargar()
         {
             var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");

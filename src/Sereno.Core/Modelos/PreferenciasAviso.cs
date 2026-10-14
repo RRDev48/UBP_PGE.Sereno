@@ -19,6 +19,12 @@ namespace Sereno.Core.Modelos
         /// <summary>Segundos mínimos que el aviso visual permanece antes de cerrarse solo (10 a 60).</summary>
         public int SegundosVisible { get; set; } = 10;
 
+        /// <summary>
+        /// Id de una voz moderna (Sereno.Platform.Speech.VozModerna). Vacío significa "automática":
+        /// usa la voz clásica del sistema. Si la voz moderna falla, también se cae a la clásica.
+        /// </summary>
+        public string VozId { get; set; } = string.Empty;
+
         public static bool EsSegundosValido(int segundos) => segundos is >= 10 and <= 60;
     }
 }
