@@ -51,6 +51,7 @@ namespace Sereno.Desktop.Vistas
                 _ => CanalVisual,
             }).IsChecked = true;
             BajoEstimulo.IsChecked = aviso.BajoEstimulo;
+            PopularVoces(aviso.VozId);
             SegundosVisible.SelectedIndex = aviso.SegundosVisible switch
             {
                 15 => 1, 20 => 2, 30 => 3, 45 => 4, 60 => 5, _ => 0,
@@ -98,6 +99,7 @@ namespace Sereno.Desktop.Vistas
                 SegundosVisible = SegundosVisible.SelectedItem is ComboBoxItem { Tag: string tiempo } && int.TryParse(tiempo, out int segundos)
                     ? segundos
                     : 10,
+                VozId = Voz.SelectedItem is ComboBoxItem { Tag: string vozId } ? vozId : string.Empty,
             };
 
             try
@@ -159,6 +161,25 @@ namespace Sereno.Desktop.Vistas
             }
 
             Application.Current.Shutdown();
+        }
+
+        private void PopularVoces(string vozIdGuardado)
+        {
+            Voz.Items.Clear();
+            Voz.Items.Add(new ComboBoxItem { Content = "Automática (voz clásica)", Tag = "" });
+            foreach (VozInfo v in VozModerna.ListarVoces())
+                Voz.Items.Add(new ComboBoxItem { Content = v.Nombre, Tag = v.Id });
+
+            int indice = 0;
+            for (int i = 0; i < Voz.Items.Count; i++)
+            {
+                if (Voz.Items[i] is ComboBoxItem { Tag: string tag } && tag == vozIdGuardado)
+                {
+                    indice = i;
+                    break;
+                }
+            }
+            Voz.SelectedIndex = indice;
         }
 
         private CanalAviso CanalElegido()

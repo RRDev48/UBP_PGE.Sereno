@@ -230,6 +230,98 @@ namespace Sereno.Tests.Storage
         }
 
         [Fact]
+        public void GuardarPreferenciasAviso_VozIdSeConservaAlReabrir()
+        {
+            _almacen.GuardarPreferenciasAviso(new PreferenciasAviso { VozId = "Microsoft Pablo" });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            Assert.Equal("Microsoft Pablo", recargado.ObtenerPreferenciasAviso().VozId);
+        }
+
+        [Fact]
+        public void RenombrarPerfil_CambiaElNombreYPersisteTrasRecargar()
+        {
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+
+            _almacen.RenombrarPerfil(perfil, "Lu");
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+            Assert.Equal("Lu", recargado.Perfiles.Single().Nombre);
+        }
+
+        [Fact]
+        public void RenombrarPerfil_NoTocaLaContrasenaNiLaClave()
+        {
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+            string hashAntes = perfil.HashContrasena;
+            string hashClaveAntes = perfil.HashClave;
+
+            _almacen.RenombrarPerfil(perfil, "Lu");
+
+            Assert.Equal(hashAntes, perfil.HashContrasena);
+            Assert.Equal(hashClaveAntes, perfil.HashClave);
+            Assert.True(_almacen.VerificarContrasena(perfil, "contrasena123"));
+        }
+
+        [Fact]
+        public void RenombrarPerfil_ConNombreVacio_LanzaExcepcion()
+        {
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+
+            Assert.Throws<ArgumentException>(() => _almacen.RenombrarPerfil(perfil, "   "));
+            Assert.Equal("Lucía", perfil.Nombre);
+        }
+
+        [Fact]
+        public void RenombrarPerfil_ConNombreDuplicado_LanzaExcepcion()
+        {
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+            _almacen.Crear("Marco", "otraContrasena1");
+
+            Assert.Throws<InvalidOperationException>(() => _almacen.RenombrarPerfil(perfil, "marco"));
+        }
+
+        [Fact]
+        public void EliminarPerfil_BorraLaCarpetaYDejaDeAparecer()
+        {
+            var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
+            string carpeta = perfil.Carpeta;
+
+            _almacen.EliminarPerfil(perfil);
+
+            Assert.False(Directory.Exists(carpeta));
+            Assert.Empty(_almacen.Perfiles);
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+            Assert.Empty(recargado.Perfiles);
+        }
+
+        [Fact]
+        public void EliminarPerfil_NoAfectaAOtrosPerfiles()
+        {
+            var (lucia, _) = _almacen.Crear("Lucía", "contrasena123");
+            _almacen.Crear("Marco", "otraContrasena1");
+
+            _almacen.EliminarPerfil(lucia);
+
+            Assert.Single(_almacen.Perfiles);
+            Assert.Equal("Marco", _almacen.Perfiles[0].Nombre);
+        }
+
+        [Fact]
+        public void EliminarPerfil_DelCompartido_LanzaExcepcion()
+        {
+            Perfil compartido = _almacen.ObtenerCompartido();
+
+            Assert.Throws<InvalidOperationException>(() => _almacen.EliminarPerfil(compartido));
+            Assert.True(Directory.Exists(compartido.Carpeta));
+        }
+
+        [Fact]
         public void GuardarDuraciones_FueraDeRango_LanzaExcepcionSinEscribir()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => _almacen.GuardarDuraciones(91, 5));

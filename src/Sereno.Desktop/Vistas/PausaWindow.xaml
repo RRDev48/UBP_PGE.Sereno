@@ -13,6 +13,18 @@
 
             <ListBox x:Name="Lista" MaxHeight="300" Margin="0,0,0,16"
                      AutomationProperties.Name="Micropausas disponibles" SelectionChanged="Lista_SelectionChanged">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="AutomationProperties.Name">
+                            <Setter.Value>
+                                <MultiBinding StringFormat="{}{0}, {1}">
+                                    <Binding Path="Nombre"/>
+                                    <Binding Path="Etiqueta"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="0,6">

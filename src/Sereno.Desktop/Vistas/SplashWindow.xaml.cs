@@ -38,13 +38,13 @@ namespace Sereno.Desktop.Vistas
 
             if (animar)
             {
-                var avance = new DoubleAnimation(0, 90, TimeSpan.FromMilliseconds(1100))
+                var avance = new DoubleAnimation(0, 90, TimeSpan.FromMilliseconds(500))
                 {
                     EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
                 };
                 Progreso.BeginAnimation(RangeBase.ValueProperty, avance);
 
-                var respiracion = new DoubleAnimation(0.28, 0.12, TimeSpan.FromMilliseconds(1200))
+                var respiracion = new DoubleAnimation(0.28, 0.12, TimeSpan.FromMilliseconds(600))
                 {
                     AutoReverse = true,
                     RepeatBehavior = RepeatBehavior.Forever,
@@ -52,13 +52,16 @@ namespace Sereno.Desktop.Vistas
                 Halo.BeginAnimation(OpacityProperty, respiracion);
             }
 
+            // Requisito no funcional: arranque hasta la bandeja en 2 s o menos (G-06, medido en E-R1).
+            // Las demoras son solo para que la animación se note; se achicaron de 1.400 a 350 ms,
+            // con margen frente a la variación normal de arranque del proceso.
             CambiarEstado("Preparando tus pausas…");
-            await Task.Delay(animar ? 500 : 0);
+            await Task.Delay(animar ? 100 : 0);
             CambiarEstado("Cargando tu configuración…");
 
             try
             {
-                await Task.WhenAll(carga, Task.Delay(animar ? 700 : 100));
+                await Task.WhenAll(carga, Task.Delay(animar ? 200 : 100));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -71,7 +74,7 @@ namespace Sereno.Desktop.Vistas
             Halo.BeginAnimation(OpacityProperty, null);
             CambiarEstado("Listo");
 
-            await Task.Delay(animar ? 200 : 0);
+            await Task.Delay(animar ? 50 : 0);
             CargaCompleta?.Invoke(this, EventArgs.Empty);
         }
 
