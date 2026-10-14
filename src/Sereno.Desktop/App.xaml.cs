@@ -37,6 +37,7 @@ namespace Sereno.Desktop
         private AvisoFinDeBloque _aviso = null!;
         private readonly SessionHistory _historial = new();
         private LectorVoz _lector = null!;
+        private VozModerna _vozModerna = null!;
         private SubscriptionToken? _avisoFinDeBloque;
         private Window? _ventanaActual;
 
@@ -66,7 +67,8 @@ namespace Sereno.Desktop
             _bandeja.PausaSolicitada += (_, _) => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
             _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
             _lector = new LectorVoz();
-            _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja, _lector);
+            _vozModerna = new VozModerna();
+            _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja, _lector, _vozModerna);
             _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e =>
             {
                 _historial.Registrar(TipoEntrada.BloqueCompletado, e.Minutos);
@@ -85,6 +87,7 @@ namespace Sereno.Desktop
         protected override void OnExit(ExitEventArgs e)
         {
             _lector?.Dispose();
+            _vozModerna?.Dispose();
             _motor?.Dispose();
             _bandeja?.Dispose();
             _instanciaUnica?.Dispose();
