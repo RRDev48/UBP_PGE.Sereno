@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Sereno.Core.History;
 using Sereno.Desktop.Servicios;
@@ -10,18 +11,26 @@ namespace Sereno.Desktop.Vistas
     /// Aviso al terminar un bloque. Aparece en la esquina inferior derecha, no toma el foco, no
     /// figura en la barra de tareas ni en Alt+Tab, y se cierra sola pasado el tiempo configurado si nadie
     /// actúa. Se opera con clic o con los atajos globales de Ctrl+Alt+P y Ctrl+Alt+D.
+    /// Con animar en false (modo bajo estímulo, animaciones de Windows desactivadas o alto
+    /// contraste activo), aparece y desaparece sin transición.
     /// </summary>
     public partial class AvisoWindow : Window
     {
         private const int MargenPantalla = 16;
+        private static readonly TimeSpan DuracionFundido = TimeSpan.FromMilliseconds(180);
 
         private readonly Action<AccionAviso> _alAccion;
+        private readonly bool _animar;
+        private readonly DispatcherTimer _cierreAutomatico;
         private bool _resuelto;
 
-        public AvisoWindow(int minutos, int segundos, Action<AccionAviso> alAccion)
+        public AvisoWindow(int minutos, int segundos, bool animar, Action<AccionAviso> alAccion)
         {
             InitializeComponent();
             _alAccion = alAccion;
+            _animar = animar;
+            Opacity = animar ? 0 : 1;
+
             TituloTexto.Text = "Bloque terminado";
             CuerpoTexto.Text = $"Tomá una pausa. Completaste {minutos} minutos de foco.";
             VentanaFlotante.Aplicar(this);
@@ -30,13 +39,13 @@ namespace Sereno.Desktop.Vistas
                 () => Resolver(AccionAviso.Pospuesto),
                 () => Resolver(AccionAviso.Descartado));
 
-            var cierre = new DispatcherTimer { Interval = TimeSpan.FromSeconds(segundos) };
-            cierre.Tick += (_, _) =>
+            _cierreAutomatico = new DispatcherTimer { Interval = TimeSpan.FromSeconds(segundos) };
+            _cierreAutomatico.Tick += (_, _) =>
             {
-                cierre.Stop();
-                Close();
+                _cierreAutomatico.Stop();
+                CerrarConFundido();
             };
-            cierre.Start();
+            _cierreAutomatico.Start();
         }
 
         private void Posponer_Click(object sender, RoutedEventArgs e) => Resolver(AccionAviso.Pospuesto);
@@ -48,6 +57,10 @@ namespace Sereno.Desktop.Vistas
             Rect area = SystemParameters.WorkArea;
             Left = area.Right - ActualWidth - MargenPantalla;
             Top = area.Bottom - ActualHeight - MargenPantalla;
+
+            if (_animar)
+                BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, DuracionFundido));
+
             Accesibilidad.Anunciar(TituloTexto);
         }
 
@@ -55,8 +68,22 @@ namespace Sereno.Desktop.Vistas
         {
             if (_resuelto) return;
             _resuelto = true;
+            _cierreAutomatico.Stop();
             _alAccion(accion);
-            Close();
+            CerrarConFundido();
+        }
+
+        private void CerrarConFundido()
+        {
+            if (!_animar)
+            {
+                Close();
+                return;
+            }
+
+            var desaparicion = new DoubleAnimation(Opacity, 0, DuracionFundido);
+            desaparicion.Completed += (_, _) => Close();
+            BeginAnimation(OpacityProperty, desaparicion);
         }
     }
 }
