@@ -65,7 +65,12 @@ namespace Sereno.Desktop.Servicios
                 _lector.Hablar($"Bloque terminado. Tomá una pausa. Completaste {minutos} minutos de foco.");
 
             if (CanalesAviso.UsaVentana(canal))
+            {
+                // Refuerzo: notificación nativa del sistema, además de la ventana propia.
+                // Es accesible por defecto y respeta "No molestar", a diferencia del overlay (US-B6).
+                _bandeja.MostrarAviso("Bloque terminado", $"Completaste {minutos} minutos de foco.");
                 Intentar();
+            }
         }
 
         private void Intentar()
