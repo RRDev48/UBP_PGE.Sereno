@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Sereno.Core.History;
 using Sereno.Core.Modelos;
@@ -26,18 +27,21 @@ namespace Sereno.Desktop.Servicios
         private readonly AlmacenPerfiles _almacen;
         private readonly BandejaService _bandeja;
         private readonly LectorVoz _lector;
+        private readonly VozModerna _vozModerna;
         private readonly DispatcherTimer _reintento = new() { Interval = Reintento };
         private readonly DispatcherTimer _posponer = new() { Interval = EsperaPosponer };
         private int _minutos;
         private DateTime _vence;
         private AvisoWindow? _ventanaActual;
 
-        public AvisoFinDeBloque(SessionHistory historial, AlmacenPerfiles almacen, BandejaService bandeja, LectorVoz lector)
+        public AvisoFinDeBloque(
+            SessionHistory historial, AlmacenPerfiles almacen, BandejaService bandeja, LectorVoz lector, VozModerna vozModerna)
         {
             _historial = historial;
             _almacen = almacen;
             _bandeja = bandeja;
             _lector = lector;
+            _vozModerna = vozModerna;
             _reintento.Tick += (_, _) => Intentar();
             _posponer.Tick += (_, _) =>
             {
@@ -62,7 +66,7 @@ namespace Sereno.Desktop.Servicios
             }
 
             if (CanalesAviso.UsaVoz(canal))
-                _lector.Hablar($"Bloque terminado. Tomá una pausa. Completaste {minutos} minutos de foco.");
+                HablarPorElCanal($"Bloque terminado. Tomá una pausa. Completaste {minutos} minutos de foco.");
 
             if (CanalesAviso.UsaVentana(canal))
             {
@@ -71,6 +75,25 @@ namespace Sereno.Desktop.Servicios
                 _bandeja.MostrarAviso("Bloque terminado", $"Completaste {minutos} minutos de foco.");
                 Intentar();
             }
+        }
+
+        /// <summary>Usa la voz moderna si hay una elegida; si falla o no hay, cae a la voz clásica.</summary>
+        private void HablarPorElCanal(string texto)
+        {
+            string vozId = _almacen.ObtenerPreferenciasAviso().VozId;
+            if (string.IsNullOrEmpty(vozId))
+            {
+                _lector.Hablar(texto);
+                return;
+            }
+
+            _ = HablarModernaConFallbackAsync(vozId, texto);
+        }
+
+        private async Task HablarModernaConFallbackAsync(string vozId, string texto)
+        {
+            bool ok = await _vozModerna.HablarAsync(vozId, texto);
+            if (!ok) _lector.Hablar(texto);
         }
 
         private void Intentar()
@@ -86,7 +109,9 @@ namespace Sereno.Desktop.Servicios
 
             _reintento.Stop();
             _ventanaActual?.Close();
-            _ventanaActual = new AvisoWindow(_minutos, _almacen.ObtenerPreferenciasAviso().SegundosVisible, Resolver);
+            PreferenciasAviso preferencias = _almacen.ObtenerPreferenciasAviso();
+            bool animar = TemaService.AnimacionesActivas && !preferencias.BajoEstimulo;
+            _ventanaActual = new AvisoWindow(_minutos, preferencias.SegundosVisible, animar, Resolver);
             _ventanaActual.Show();
         }
 
@@ -94,7 +119,10 @@ namespace Sereno.Desktop.Servicios
         {
             _historial.RegistrarAviso(accion, _minutos);
             if (accion == AccionAviso.Descartado)
+            {
                 _lector.Callar();
+                _vozModerna.Callar();
+            }
             else
                 _posponer.Start();
         }

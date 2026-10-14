@@ -26,6 +26,7 @@ namespace Sereno.Desktop.Vistas
         public event EventHandler<PerfilEventArgs>? RecuperacionSolicitada;
         public event EventHandler? CreacionSolicitada;
         public event EventHandler? UsoSinPerfilSolicitado;
+        public event EventHandler? AdministrarPerfilesSolicitado;
 
         public LoginWindow(AlmacenPerfiles almacen, Perfil perfil)
         {
@@ -139,5 +140,8 @@ namespace Sereno.Desktop.Vistas
 
         private void SinPerfil_Click(object sender, RoutedEventArgs e) =>
             UsoSinPerfilSolicitado?.Invoke(this, EventArgs.Empty);
+
+        private void AdministrarPerfiles_Click(object sender, RoutedEventArgs e) =>
+            AdministrarPerfilesSolicitado?.Invoke(this, EventArgs.Empty);
     }
 }

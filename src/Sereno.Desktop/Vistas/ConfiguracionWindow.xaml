@@ -46,6 +46,9 @@
                          MinHeight="44" Margin="0,0,0,4"/>
             <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
                        Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
+            <TextBlock x:Name="VozEtiqueta" Style="{StaticResource Etiqueta}" Text="Voz"/>
+            <ComboBox x:Name="Voz" AutomationProperties.Name="Voz del aviso hablado"
+                      HorizontalAlignment="Left" MinWidth="220" MinHeight="44" Margin="0,0,0,12"/>
             <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,12">
                 <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
             </CheckBox>

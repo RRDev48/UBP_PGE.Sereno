@@ -52,6 +52,8 @@
                         Click="CrearPerfil_Click"/>
                 <Button Style="{StaticResource BotonEnlace}" Content="Usar Sereno sin perfil"
                         Click="SinPerfil_Click"/>
+                <Button Style="{StaticResource BotonEnlace}" Content="Administrar perfiles"
+                        Click="AdministrarPerfiles_Click"/>
             </StackPanel>
 
             <c:AvisoPrivacidad Texto="Tu perfil y tu historial se guardan solo en esta computadora. Sereno no se conecta a internet."/>
