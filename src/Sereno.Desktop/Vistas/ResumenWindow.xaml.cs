@@ -44,6 +44,7 @@ namespace Sereno.Desktop.Vistas
             TipoEntrada.PausaTomada => $"Pausa de {entrada.Minutos} min tomada",
             TipoEntrada.AvisoPospuesto => $"Aviso pospuesto (bloque de {entrada.Minutos} min)",
             TipoEntrada.AvisoDescartado => $"Aviso descartado (bloque de {entrada.Minutos} min)",
+            TipoEntrada.AvisoPausaIniciada => $"Pausa iniciada desde el aviso (bloque de {entrada.Minutos} min)",
             _ => string.Empty,
         };
     }

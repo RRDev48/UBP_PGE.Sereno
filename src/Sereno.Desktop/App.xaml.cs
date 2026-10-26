@@ -64,11 +64,12 @@ namespace Sereno.Desktop
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
             _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
             _motor.EstadoCambio += (_, _) => _bandeja.ActualizarEstado(_motor.Estado, _motor.MinutosRestantes);
-            _bandeja.PausaSolicitada += (_, _) => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
+            _bandeja.PausaSolicitada += (_, _) => MostrarPausa();
             _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
             _lector = new LectorVoz();
             _vozModerna = new VozModerna();
             _aviso = new AvisoFinDeBloque(_historial, _almacen, _bandeja, _lector, _vozModerna);
+            _aviso.PausaSolicitada += (_, _) => MostrarPausa();
             _avisoFinDeBloque = _bus.Subscribe<BloqueTerminado>(e =>
             {
                 _historial.Registrar(TipoEntrada.BloqueCompletado, e.Minutos);
@@ -138,6 +139,8 @@ namespace Sereno.Desktop
             registro.UsoSinPerfilSolicitado += (_, _) => EntrarSinPerfil();
             Mostrar(registro);
         }
+
+        private void MostrarPausa() => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
 
         private void MostrarAdministrarPerfiles()
         {

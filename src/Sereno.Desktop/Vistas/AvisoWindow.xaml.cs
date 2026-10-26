@@ -48,6 +48,8 @@ namespace Sereno.Desktop.Vistas
             _cierreAutomatico.Start();
         }
 
+        private void EmpezarPausa_Click(object sender, RoutedEventArgs e) => Resolver(AccionAviso.PausaIniciada);
+
         private void Posponer_Click(object sender, RoutedEventArgs e) => Resolver(AccionAviso.Pospuesto);
 
         private void Descartar_Click(object sender, RoutedEventArgs e) => Resolver(AccionAviso.Descartado);

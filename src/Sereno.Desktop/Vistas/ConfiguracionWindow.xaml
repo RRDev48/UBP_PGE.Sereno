@@ -17,6 +17,38 @@
             <c:CampoTexto x:Name="Pausa" Etiqueta="Pausa (minutos)" LongitudMaxima="2"
                           Ayuda="Entre 1 y 30 minutos."/>
 
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Canal del aviso" Margin="0,24,0,10"/>
+            <RadioButton x:Name="CanalVisual" GroupName="Canal" Content="Solo visual (ventana en la esquina)"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <RadioButton x:Name="CanalHablado" GroupName="Canal" Content="Solo hablado (sin ventana)"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
+                         MinHeight="44" Margin="0,0,0,4"/>
+            <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
+                       Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
+            <TextBlock x:Name="VozEtiqueta" Style="{StaticResource Etiqueta}" Text="Voz"/>
+            <ComboBox x:Name="Voz" AutomationProperties.Name="Voz del aviso hablado"
+                      HorizontalAlignment="Left" MinWidth="220" MinHeight="44" Margin="0,0,0,12"/>
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Tiempo del aviso visual"/>
+            <ComboBox x:Name="SegundosVisible" AutomationProperties.Name="Tiempo del aviso visual"
+                      HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,12">
+                <ComboBoxItem Content="10 segundos" Tag="10"/>
+                <ComboBoxItem Content="15 segundos" Tag="15"/>
+                <ComboBoxItem Content="20 segundos" Tag="20"/>
+                <ComboBoxItem Content="30 segundos" Tag="30"/>
+                <ComboBoxItem Content="45 segundos" Tag="45"/>
+                <ComboBoxItem Content="60 segundos" Tag="60"/>
+            </ComboBox>
+
+            <TextBlock Style="{StaticResource Etiqueta}" Text="Movimiento y estímulo" Margin="0,24,0,10"/>
+            <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,2">
+                <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
+            </CheckBox>
+            <TextBlock Style="{StaticResource Ayuda}" Margin="0,0,0,12" TextWrapping="Wrap"
+                       Text="Se activa solo si Windows tiene las animaciones desactivadas. También puede forzarse con esta casilla."/>
+
             <TextBlock Style="{StaticResource Etiqueta}" Text="Lectura y visualización" Margin="0,24,0,10"/>
             <CheckBox x:Name="FuenteLectura" Margin="0,0,0,12">
                 <TextBlock Text="Fuente para lectura cómoda" TextWrapping="Wrap"/>
@@ -33,34 +65,6 @@
                 <ComboBoxItem Content="100 %" Tag="100"/>
                 <ComboBoxItem Content="125 %" Tag="125"/>
                 <ComboBoxItem Content="150 %" Tag="150"/>
-            </ComboBox>
-
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Canal del aviso" Margin="0,24,0,10"/>
-            <RadioButton x:Name="CanalVisual" GroupName="Canal" Content="Solo visual (ventana en la esquina)"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <RadioButton x:Name="CanalHablado" GroupName="Canal" Content="Solo hablado (sin ventana)"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
-                       Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
-            <TextBlock x:Name="VozEtiqueta" Style="{StaticResource Etiqueta}" Text="Voz"/>
-            <ComboBox x:Name="Voz" AutomationProperties.Name="Voz del aviso hablado"
-                      HorizontalAlignment="Left" MinWidth="220" MinHeight="44" Margin="0,0,0,12"/>
-            <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,12">
-                <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
-            </CheckBox>
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Tiempo del aviso visual"/>
-            <ComboBox x:Name="SegundosVisible" AutomationProperties.Name="Tiempo del aviso visual"
-                      HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,12">
-                <ComboBoxItem Content="10 segundos" Tag="10"/>
-                <ComboBoxItem Content="15 segundos" Tag="15"/>
-                <ComboBoxItem Content="20 segundos" Tag="20"/>
-                <ComboBoxItem Content="30 segundos" Tag="30"/>
-                <ComboBoxItem Content="45 segundos" Tag="45"/>
-                <ComboBoxItem Content="60 segundos" Tag="60"/>
             </ComboBox>
 
             <TextBlock Style="{StaticResource Etiqueta}" Text="Datos y privacidad" Margin="0,24,0,10"/>
