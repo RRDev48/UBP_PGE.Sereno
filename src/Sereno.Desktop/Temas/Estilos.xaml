@@ -25,7 +25,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Texto}"/>
         <Setter Property="FontFamily" Value="{DynamicResource FuenteBase}"/>
         <Setter Property="FontSize" Value="15"/>
-        <Setter Property="Width" Value="460"/>
+        <Setter Property="Width" Value="600"/>
         <Setter Property="SizeToContent" Value="Height"/>
         <Setter Property="ResizeMode" Value="CanMinimize"/>
         <Setter Property="UseLayoutRounding" Value="True"/>
