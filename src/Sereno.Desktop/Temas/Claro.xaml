@@ -7,6 +7,7 @@
     <SolidColorBrush x:Key="Separador" Color="#D5D9E3"/>
     <SolidColorBrush x:Key="BordeCampo" Color="#6B7390"/>
     <SolidColorBrush x:Key="CampoFondo" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Superficie" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="Acento" Color="#8A5300"/>
     <SolidColorBrush x:Key="FondoPrimario" Color="#1B2340"/>
     <SolidColorBrush x:Key="TextoPrimario" Color="#F6F7FA"/>

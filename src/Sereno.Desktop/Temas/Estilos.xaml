@@ -306,6 +306,17 @@
         </Setter>
     </Style>
 
+    <!-- Tarjeta de sección: igual lenguaje visual que Configuración/Sesiones de concentración de
+         Windows 11. Sobre el fondo Mica (cuando está disponible) o sobre Fondo si no lo está. -->
+    <Style x:Key="TarjetaSeccion" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Superficie}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Separador}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+    </Style>
+
     <Style x:Key="TarjetaPerfil" TargetType="Border">
         <Setter Property="BorderBrush" Value="{DynamicResource Separador}"/>
         <Setter Property="BorderThickness" Value="1"/>
