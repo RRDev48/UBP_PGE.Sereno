@@ -12,31 +12,40 @@
             <TextBlock Style="{StaticResource Bajada}"
                        Text="Lo que pasó desde que iniciaste sesión. Solo muestra registros, sin calificaciones."/>
 
-            <UniformGrid Columns="3" Margin="0,0,0,16">
-                <Border Style="{StaticResource TarjetaPerfil}" Margin="0,0,8,0">
-                    <StackPanel>
-                        <TextBlock x:Name="BloquesTexto" FontSize="26" FontWeight="SemiBold"/>
-                        <TextBlock Text="bloques completados" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource TarjetaPerfil}" Margin="0,0,8,0">
-                    <StackPanel>
-                        <TextBlock x:Name="PausasTexto" FontSize="26" FontWeight="SemiBold"/>
-                        <TextBlock Text="pausas tomadas" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource TarjetaPerfil}">
-                    <StackPanel>
-                        <TextBlock x:Name="PospuestosTexto" FontSize="26" FontWeight="SemiBold"/>
-                        <TextBlock Text="avisos pospuestos" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
+            <Border Style="{StaticResource TarjetaSeccion}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Sesión de hoy" Margin="0,0,0,10"/>
+                    <UniformGrid Columns="3">
+                        <Border Style="{StaticResource TarjetaPerfil}" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock x:Name="BloquesTexto" FontSize="26" FontWeight="SemiBold"/>
+                                <TextBlock Text="bloques completados" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource TarjetaPerfil}" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock x:Name="PausasTexto" FontSize="26" FontWeight="SemiBold"/>
+                                <TextBlock Text="pausas tomadas" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource TarjetaPerfil}" Margin="0,0,0,0">
+                            <StackPanel>
+                                <TextBlock x:Name="PospuestosTexto" FontSize="26" FontWeight="SemiBold"/>
+                                <TextBlock Text="avisos pospuestos" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
 
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Registro"/>
-            <ListBox x:Name="Registro" MaxHeight="260" AutomationProperties.Name="Registro de la sesión"
-                     Focusable="True" Margin="0,0,0,12"/>
-            <TextBlock x:Name="VacioTexto" Style="{StaticResource Ayuda}" Text="Todavía no hay registros."/>
+            <Border Style="{StaticResource TarjetaSeccion}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Registro" Margin="0,0,0,10"/>
+                    <ListBox x:Name="Registro" MaxHeight="260" AutomationProperties.Name="Registro de la sesión"
+                             Focusable="True" Margin="0,0,0,0"/>
+                    <TextBlock x:Name="VacioTexto" Style="{StaticResource Ayuda}" Text="Todavía no hay registros."/>
+                </StackPanel>
+            </Border>
 
             <WrapPanel Margin="0,4,0,0">
                 <Button x:Name="Deshacer" Style="{StaticResource BotonSecundario}"

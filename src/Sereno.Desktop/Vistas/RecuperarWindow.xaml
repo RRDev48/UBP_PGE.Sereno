@@ -14,11 +14,15 @@
                 <TextBlock Style="{StaticResource Titulo}" Text="Recuperá tu acceso"/>
                 <TextBlock x:Name="BajadaPaso1" Style="{StaticResource Bajada}"/>
 
-                <c:CampoTexto x:Name="Clave" Etiqueta="Clave de recuperación" LongitudMaxima="19"
-                              Monoespaciada="True" Ayuda="Formato: XXXX-XXXX-XXXX-XXXX"/>
+                <Border Style="{StaticResource TarjetaSeccion}">
+                    <StackPanel>
+                        <c:CampoTexto x:Name="Clave" Etiqueta="Clave de recuperación" LongitudMaxima="19"
+                                      Monoespaciada="True" Ayuda="Formato: XXXX-XXXX-XXXX-XXXX" Margin="0,0,0,0"/>
+                    </StackPanel>
+                </Border>
 
                 <Button x:Name="Verificar" Style="{StaticResource BotonPrimario}" Content="Verificar clave"
-                        IsDefault="True" Click="Verificar_Click"/>
+                        IsDefault="True" Margin="0,8,0,0" Click="Verificar_Click"/>
 
                 <StackPanel Margin="0,12,0,0">
                     <Button Style="{StaticResource BotonEnlace}" Content="Volver a iniciar sesión"
@@ -33,11 +37,15 @@
                 <TextBlock Style="{StaticResource Titulo}" Text="Elegí una contraseña nueva"/>
                 <TextBlock Style="{StaticResource Bajada}" Text="Tu historial y tu configuración se mantienen."/>
 
-                <c:CampoContrasena x:Name="Nueva" Etiqueta="Nueva contraseña" Ayuda="Al menos 8 caracteres."/>
-                <c:CampoContrasena x:Name="Repetir" Etiqueta="Repetir contraseña"/>
+                <Border Style="{StaticResource TarjetaSeccion}">
+                    <StackPanel>
+                        <c:CampoContrasena x:Name="Nueva" Etiqueta="Nueva contraseña" Ayuda="Al menos 8 caracteres."/>
+                        <c:CampoContrasena x:Name="Repetir" Etiqueta="Repetir contraseña" Margin="0,0,0,0"/>
+                    </StackPanel>
+                </Border>
 
                 <Button x:Name="Guardar" Style="{StaticResource BotonPrimario}" Content="Guardar contraseña"
-                        Click="Guardar_Click"/>
+                        Margin="0,8,0,0" Click="Guardar_Click"/>
 
                 <StackPanel Margin="0,12,0,0">
                     <Button Style="{StaticResource BotonEnlace}" Content="Usar otra clave"
@@ -51,16 +59,18 @@
                 <TextBlock Style="{StaticResource Bajada}"
                            Text="Ya podés iniciar sesión con tu contraseña nueva. Tu clave de recuperación sigue siendo la misma."/>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                    <Path Data="{StaticResource GeoTilde}" Width="18" Height="18" Stretch="Uniform"
-                          Stroke="{DynamicResource Exito}" StrokeThickness="2.5"
-                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="0,0,8,0"/>
-                    <TextBlock x:Name="ExitoTexto" Foreground="{DynamicResource Exito}" TextWrapping="Wrap"
-                               AutomationProperties.LiveSetting="Polite"/>
-                </StackPanel>
+                <Border Style="{StaticResource TarjetaSeccion}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource GeoTilde}" Width="18" Height="18" Stretch="Uniform"
+                              Stroke="{DynamicResource Exito}" StrokeThickness="2.5"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="ExitoTexto" Foreground="{DynamicResource Exito}" TextWrapping="Wrap"
+                                   AutomationProperties.LiveSetting="Polite"/>
+                    </StackPanel>
+                </Border>
 
                 <Button x:Name="IrALogin" Style="{StaticResource BotonPrimario}" Content="Iniciar sesión"
-                        Click="Volver_Click"/>
+                        Margin="0,8,0,0" Click="Volver_Click"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

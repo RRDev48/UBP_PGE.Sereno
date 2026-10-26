@@ -8,90 +8,111 @@
         <StackPanel Margin="32,28,32,24">
             <c:Marca/>
 
-            <TextBlock Style="{StaticResource Titulo}" Text="Duración de los bloques"/>
+            <TextBlock Style="{StaticResource Titulo}" Text="Configuración"/>
             <TextBlock Style="{StaticResource Bajada}"
-                       Text="El cambio aplica desde el próximo bloque. Un bloque en curso no se reinicia."/>
+                       Text="El cambio de duración aplica desde el próximo bloque. Un bloque en curso no se reinicia."/>
 
-            <c:CampoTexto x:Name="Bloque" Etiqueta="Bloque de foco (minutos)" LongitudMaxima="2"
-                          Ayuda="Entre 5 y 90 minutos."/>
-            <c:CampoTexto x:Name="Pausa" Etiqueta="Pausa (minutos)" LongitudMaxima="2"
-                          Ayuda="Entre 1 y 30 minutos."/>
-
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Canal del aviso" Margin="0,24,0,10"/>
-            <RadioButton x:Name="CanalVisual" GroupName="Canal" Content="Solo visual (ventana en la esquina)"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <RadioButton x:Name="CanalHablado" GroupName="Canal" Content="Solo hablado (sin ventana)"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
-                         MinHeight="44" Margin="0,0,0,4"/>
-            <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
-                       Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
-            <TextBlock x:Name="VozEtiqueta" Style="{StaticResource Etiqueta}" Text="Voz"/>
-            <ComboBox x:Name="Voz" AutomationProperties.Name="Voz del aviso hablado"
-                      HorizontalAlignment="Left" MinWidth="220" MinHeight="44" Margin="0,0,0,12"/>
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Tiempo del aviso visual"/>
-            <ComboBox x:Name="SegundosVisible" AutomationProperties.Name="Tiempo del aviso visual"
-                      HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,12">
-                <ComboBoxItem Content="10 segundos" Tag="10"/>
-                <ComboBoxItem Content="15 segundos" Tag="15"/>
-                <ComboBoxItem Content="20 segundos" Tag="20"/>
-                <ComboBoxItem Content="30 segundos" Tag="30"/>
-                <ComboBoxItem Content="45 segundos" Tag="45"/>
-                <ComboBoxItem Content="60 segundos" Tag="60"/>
-            </ComboBox>
-
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Movimiento y estímulo" Margin="0,24,0,10"/>
-            <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,2">
-                <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
-            </CheckBox>
-            <TextBlock Style="{StaticResource Ayuda}" Margin="0,0,0,12" TextWrapping="Wrap"
-                       Text="Se activa solo si Windows tiene las animaciones desactivadas. También puede forzarse con esta casilla."/>
-
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Lectura y visualización" Margin="0,24,0,10"/>
-            <CheckBox x:Name="FuenteLectura" Margin="0,0,0,12">
-                <TextBlock Text="Fuente para lectura cómoda" TextWrapping="Wrap"/>
-            </CheckBox>
-            <CheckBox x:Name="AltoContraste" Margin="0,0,0,12">
-                <TextBlock Text="Alto contraste" TextWrapping="Wrap"/>
-            </CheckBox>
-            <CheckBox x:Name="EspaciadoAmplio" Margin="0,0,0,12">
-                <TextBlock Text="Espaciado amplio entre líneas" TextWrapping="Wrap"/>
-            </CheckBox>
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Tamaño del texto"/>
-            <ComboBox x:Name="Escala" AutomationProperties.Name="Tamaño del texto"
-                      HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,12">
-                <ComboBoxItem Content="100 %" Tag="100"/>
-                <ComboBoxItem Content="125 %" Tag="125"/>
-                <ComboBoxItem Content="150 %" Tag="150"/>
-            </ComboBox>
-
-            <TextBlock Style="{StaticResource Etiqueta}" Text="Datos y privacidad" Margin="0,24,0,10"/>
-            <TextBlock x:Name="UbicacionDatos" TextWrapping="Wrap" Margin="0,0,0,10"/>
-            <WrapPanel Margin="0,0,0,8">
-                <Button Style="{StaticResource BotonSecundario}" Content="Exportar mis datos"
-                        Margin="0,0,8,8" Click="Exportar_Click"/>
-                <Button Style="{StaticResource BotonSecundario}" Content="Borrar todos los datos"
-                        Margin="0,0,0,8" Click="PedirBorrado_Click"/>
-            </WrapPanel>
-            <Border x:Name="PanelBorrado" Visibility="Collapsed" BorderBrush="{DynamicResource Error}"
-                    BorderThickness="2" CornerRadius="10" Padding="14" Margin="0,0,0,12">
+            <Border Style="{StaticResource TarjetaSeccion}">
                 <StackPanel>
-                    <TextBlock Text="¿Borrar todos los datos de Sereno?" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <TextBlock Style="{StaticResource Ayuda}"
-                               Text="Se eliminan los perfiles, las claves de recuperación y el historial. No se puede deshacer."/>
-                    <WrapPanel Margin="0,10,0,0">
-                        <Button Style="{StaticResource BotonSecundario}" Content="Sí, borrar todo"
-                                Foreground="{DynamicResource Error}" Margin="0,0,8,8" Click="ConfirmarBorrado_Click"/>
-                        <Button Style="{StaticResource BotonPrimario}" Content="Cancelar"
-                                Margin="0,0,0,8" Click="CancelarBorrado_Click"/>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Duración de los bloques" Margin="0,0,0,10"/>
+                    <c:CampoTexto x:Name="Bloque" Etiqueta="Bloque de foco (minutos)" LongitudMaxima="2"
+                                  Ayuda="Entre 5 y 90 minutos."/>
+                    <c:CampoTexto x:Name="Pausa" Etiqueta="Pausa (minutos)" LongitudMaxima="2"
+                                  Ayuda="Entre 1 y 30 minutos." Margin="0,0,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource TarjetaSeccion}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Canal del aviso" Margin="0,0,0,10"/>
+                    <RadioButton x:Name="CanalVisual" GroupName="Canal" Content="Solo visual (ventana en la esquina)"
+                                 MinHeight="44" Margin="0,0,0,4"/>
+                    <RadioButton x:Name="CanalHablado" GroupName="Canal" Content="Solo hablado (sin ventana)"
+                                 MinHeight="44" Margin="0,0,0,4"/>
+                    <RadioButton x:Name="CanalAmbos" GroupName="Canal" Content="Visual y hablado"
+                                 MinHeight="44" Margin="0,0,0,4"/>
+                    <RadioButton x:Name="CanalSistema" GroupName="Canal" Content="Solo notificación del sistema"
+                                 MinHeight="44" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="VozAyuda" Style="{StaticResource Ayuda}" Margin="0,0,0,12"
+                               Text="La lectura en voz alta está desactivada por defecto. Necesita una voz en español instalada en Windows."/>
+                    <TextBlock x:Name="VozEtiqueta" Style="{StaticResource Etiqueta}" Text="Voz"/>
+                    <ComboBox x:Name="Voz" AutomationProperties.Name="Voz del aviso hablado"
+                              HorizontalAlignment="Left" MinWidth="220" MinHeight="44" Margin="0,0,0,12"/>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Tiempo del aviso visual"/>
+                    <ComboBox x:Name="SegundosVisible" AutomationProperties.Name="Tiempo del aviso visual"
+                              HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,0">
+                        <ComboBoxItem Content="10 segundos" Tag="10"/>
+                        <ComboBoxItem Content="15 segundos" Tag="15"/>
+                        <ComboBoxItem Content="20 segundos" Tag="20"/>
+                        <ComboBoxItem Content="30 segundos" Tag="30"/>
+                        <ComboBoxItem Content="45 segundos" Tag="45"/>
+                        <ComboBoxItem Content="60 segundos" Tag="60"/>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource TarjetaSeccion}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Movimiento y estímulo" Margin="0,0,0,10"/>
+                    <CheckBox x:Name="BajoEstimulo" Margin="0,0,0,2">
+                        <TextBlock Text="Modo bajo estímulo: sin movimiento ni parpadeo" TextWrapping="Wrap"/>
+                    </CheckBox>
+                    <TextBlock Style="{StaticResource Ayuda}" Margin="0,0,0,0" TextWrapping="Wrap"
+                               Text="Se activa solo si Windows tiene las animaciones desactivadas. También puede forzarse con esta casilla."/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource TarjetaSeccion}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Lectura y visualización" Margin="0,0,0,10"/>
+                    <CheckBox x:Name="FuenteLectura" Margin="0,0,0,12">
+                        <TextBlock Text="Fuente para lectura cómoda" TextWrapping="Wrap"/>
+                    </CheckBox>
+                    <CheckBox x:Name="AltoContraste" Margin="0,0,0,12">
+                        <TextBlock Text="Alto contraste" TextWrapping="Wrap"/>
+                    </CheckBox>
+                    <CheckBox x:Name="EspaciadoAmplio" Margin="0,0,0,12">
+                        <TextBlock Text="Espaciado amplio entre líneas" TextWrapping="Wrap"/>
+                    </CheckBox>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Tamaño del texto"/>
+                    <ComboBox x:Name="Escala" AutomationProperties.Name="Tamaño del texto"
+                              HorizontalAlignment="Left" MinWidth="160" MinHeight="44" Margin="0,0,0,0">
+                        <ComboBoxItem Content="100 %" Tag="100"/>
+                        <ComboBoxItem Content="125 %" Tag="125"/>
+                        <ComboBoxItem Content="150 %" Tag="150"/>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource TarjetaSeccion}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Etiqueta}" Text="Datos y privacidad" Margin="0,0,0,10"/>
+                    <TextBlock x:Name="UbicacionDatos" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <WrapPanel Margin="0,0,0,0">
+                        <Button Style="{StaticResource BotonSecundario}" Content="Exportar mis datos"
+                                Margin="0,0,8,8" Click="Exportar_Click"/>
+                        <Button Style="{StaticResource BotonSecundario}" Content="Borrar todos los datos"
+                                Margin="0,0,0,8" Click="PedirBorrado_Click"/>
                     </WrapPanel>
+                    <Border x:Name="PanelBorrado" Visibility="Collapsed" BorderBrush="{DynamicResource Error}"
+                            BorderThickness="2" CornerRadius="10" Padding="14" Margin="0,8,0,0">
+                        <StackPanel>
+                            <TextBlock Text="¿Borrar todos los datos de Sereno?" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <TextBlock Style="{StaticResource Ayuda}"
+                                       Text="Se eliminan los perfiles, las claves de recuperación y el historial. No se puede deshacer."/>
+                            <WrapPanel Margin="0,10,0,0">
+                                <Button Style="{StaticResource BotonSecundario}" Content="Sí, borrar todo"
+                                        Foreground="{DynamicResource Error}" Margin="0,0,8,8" Click="ConfirmarBorrado_Click"/>
+                                <Button Style="{StaticResource BotonPrimario}" Content="Cancelar"
+                                        Margin="0,0,0,8" Click="CancelarBorrado_Click"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 
             <Button Style="{StaticResource BotonPrimario}" Content="Guardar"
-                    IsDefault="True" Margin="0,12,0,0" Click="Guardar_Click"/>
+                    IsDefault="True" Margin="0,8,0,0" Click="Guardar_Click"/>
 
             <StackPanel Margin="0,12,0,0">
                 <Button Style="{StaticResource BotonEnlace}" Content="Cancelar"
