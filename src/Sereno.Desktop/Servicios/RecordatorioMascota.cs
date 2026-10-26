@@ -9,7 +9,7 @@ namespace Sereno.Desktop.Servicios
     /// </summary>
     public sealed class RecordatorioMascota
     {
-        private const int IntervaloMinutos = 5;
+        private const int IntervaloMinutos = 1;
 
         private readonly MotorDeBloques _motor;
         private int? _duracionInicial;
