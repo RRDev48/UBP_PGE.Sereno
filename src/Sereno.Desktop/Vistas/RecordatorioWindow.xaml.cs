@@ -28,6 +28,7 @@ namespace Sereno.Desktop.Vistas
             TextoRestante.Text = minutosRestantes == 1
                 ? "Queda 1 minuto para terminar el bloque."
                 : $"Quedan {minutosRestantes} minutos para terminar el bloque.";
+            MascotaIcono.Animar = animar;
             VentanaFlotante.Aplicar(this);
 
             var cierre = new DispatcherTimer { Interval = Duracion };
