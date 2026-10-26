@@ -214,7 +214,6 @@ namespace Sereno.Desktop
         {
             Window? anterior = _ventanaActual;
             _ventanaActual = nueva;
-            VentanaMica.Aplicar(nueva, TemaService.WindowsUsaTemaOscuro());
             nueva.Closed += Ventana_Closed;
             nueva.Show();
             nueva.Activate();

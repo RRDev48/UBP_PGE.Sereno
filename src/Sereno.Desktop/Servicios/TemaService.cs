@@ -19,9 +19,6 @@ namespace Sereno.Desktop.Servicios
         public static bool AnimacionesActivas =>
             SystemParameters.ClientAreaAnimation && !SystemParameters.HighContrast;
 
-        /// <summary>Si la preferencia de alto contraste de Sereno está activa en el tema aplicado.</summary>
-        public static bool AltoContrasteActivo { get; private set; }
-
         public static bool WindowsUsaTemaOscuro()
         {
             try
@@ -37,7 +34,6 @@ namespace Sereno.Desktop.Servicios
 
         public static void Aplicar(Application app, PreferenciasVisuales preferencias)
         {
-            AltoContrasteActivo = preferencias.AltoContraste;
             string archivo = preferencias.AltoContraste ? "AltoContraste.xaml"
                 : WindowsUsaTemaOscuro() ? "Oscuro.xaml"
                 : "Claro.xaml";
