@@ -35,6 +35,7 @@ namespace Sereno.Desktop
         private readonly EventBus _bus = new();
         private MotorDeBloques _motor = null!;
         private AvisoFinDeBloque _aviso = null!;
+        private RecordatorioMascota _recordatorio = null!;
         private readonly SessionHistory _historial = new();
         private LectorVoz _lector = null!;
         private VozModerna _vozModerna = null!;
@@ -64,6 +65,8 @@ namespace Sereno.Desktop
             _bandeja.ConfiguracionSolicitada += (_, _) => Mostrar(new ConfiguracionWindow(_almacen));
             _motor = new MotorDeBloques(new BlockTimer(new RelojMonotono(), _bus));
             _motor.EstadoCambio += (_, _) => _bandeja.ActualizarEstado(_motor.Estado, _motor.MinutosRestantes);
+            _recordatorio = new RecordatorioMascota(_motor);
+            _recordatorio.Recordatorio += (_, minutos) => MostrarRecordatorio(minutos);
             _bandeja.PausaSolicitada += (_, _) => MostrarPausa();
             _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
             _lector = new LectorVoz();
@@ -141,6 +144,16 @@ namespace Sereno.Desktop
         }
 
         private void MostrarPausa() => Mostrar(new PausaWindow(_almacen.ObtenerDuraciones().MinutosPausa, _historial));
+
+        /// <summary>
+        /// No pasa por Mostrar(): es un aviso flotante que convive con lo que esté abierto,
+        /// como AvisoBreveWindow, no una pantalla que reemplaza a la anterior.
+        /// </summary>
+        private void MostrarRecordatorio(int minutosRestantes)
+        {
+            bool animar = TemaService.AnimacionesActivas && !_almacen.ObtenerPreferenciasAviso().BajoEstimulo;
+            new RecordatorioWindow(minutosRestantes, animar).Show();
+        }
 
         private void MostrarAdministrarPerfiles()
         {
