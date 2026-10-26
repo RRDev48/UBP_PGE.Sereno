@@ -31,9 +31,10 @@ namespace Sereno.Desktop.Servicios
                 IntPtr hwnd = new WindowInteropHelper(ventana).Handle;
                 if (hwnd == IntPtr.Zero) return;
 
-                if (HwndSource.FromHwnd(hwnd) is HwndSource fuente)
-                    fuente.CompositionTarget.BackgroundColor = Colors.Transparent;
-
+                // OJO: no tocar HwndSource.CompositionTarget.BackgroundColor acá. Ponerlo en
+                // Transparent (sin AllowsTransparency, que requeriría sacar el marco nativo)
+                // deja el área cliente en blanco: DWM acepta el backdrop pero WPF no compone
+                // nada sobre él. Alcanza con Window.Background para que Mica se vea detrás.
                 int oscuro = temaOscuro ? 1 : 0;
                 DwmSetWindowAttribute(hwnd, DwmwaUseImmersiveDarkMode, ref oscuro, sizeof(int));
                 int tipo = DwmsbtMainWindow;
@@ -58,7 +59,7 @@ namespace Sereno.Desktop.Servicios
             try
             {
                 using RegistryKey? clave = Registry.CurrentUser.OpenSubKey(
-                    @"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent");
+                    @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
                 return clave?.GetValue("EnableTransparency") is not int valor || valor != 0;
             }
             catch (Exception)
