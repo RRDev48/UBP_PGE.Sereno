@@ -2,41 +2,23 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Microsoft.Win32;
 using Sereno.Core.Modelos;
 
 namespace Sereno.Desktop.Servicios
 {
     /// <summary>
-    /// Aplica el tema (claro, oscuro o de alto contraste) y la fuente de lectura según las preferencias.
-    /// Sin preferencias de contraste, sigue la configuración de Windows.
+    /// Aplica el tema (claro o de alto contraste) y la fuente de lectura según las preferencias.
+    /// No sigue el tema oscuro de Windows: el tema por defecto es siempre el claro.
     /// </summary>
     public static class TemaService
     {
-        private const string ClaveRegistro = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
-
         /// <summary>Falso si Windows tiene desactivadas las animaciones o el contraste alto activo.</summary>
         public static bool AnimacionesActivas =>
             SystemParameters.ClientAreaAnimation && !SystemParameters.HighContrast;
 
-        public static bool WindowsUsaTemaOscuro()
-        {
-            try
-            {
-                using RegistryKey? clave = Registry.CurrentUser.OpenSubKey(ClaveRegistro);
-                return clave?.GetValue("AppsUseLightTheme") is int valor && valor == 0;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public static void Aplicar(Application app, PreferenciasVisuales preferencias)
         {
-            string archivo = preferencias.AltoContraste ? "AltoContraste.xaml"
-                : WindowsUsaTemaOscuro() ? "Oscuro.xaml"
-                : "Claro.xaml";
+            string archivo = preferencias.AltoContraste ? "AltoContraste.xaml" : "Claro.xaml";
             var nuevo = new ResourceDictionary { Source = new Uri("pack://application:,,,/Temas/" + archivo, UriKind.Absolute) };
 
             var diccionarios = app.Resources.MergedDictionaries;
@@ -63,7 +45,6 @@ namespace Sereno.Desktop.Servicios
 
         private static bool EsDiccionarioDeTema(string ruta) =>
             ruta.EndsWith("Claro.xaml", StringComparison.OrdinalIgnoreCase) ||
-            ruta.EndsWith("Oscuro.xaml", StringComparison.OrdinalIgnoreCase) ||
             ruta.EndsWith("AltoContraste.xaml", StringComparison.OrdinalIgnoreCase);
 
         private static void AplicarFuente(Application app, bool fuenteLectura)

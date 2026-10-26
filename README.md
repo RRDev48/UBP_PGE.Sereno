@@ -121,7 +121,7 @@ Sereno.sln
 │   │   ├── Marca            Luna + "Sereno"
 │   │   └── AvisoPrivacidad  Candado + texto al pie
 │   ├── Servicios/
-│   │   ├── TemaService             Tema (claro, oscuro o alto contraste) y fuente de lectura
+│   │   ├── TemaService             Tema (claro o alto contraste) y fuente de lectura
 │   │   ├── Accesibilidad           Anuncios para lectores de pantalla (con y sin foco)
 │   │   ├── MotorDeBloques          Impulsa el BlockTimer y avisa cambios de estado
 │   │   ├── AvisoFinDeBloque        Decide el canal del aviso y lo muestra
@@ -129,7 +129,7 @@ Sereno.sln
 │   │   ├── AtajosGlobales          Atajos de teclado activos solo mientras el aviso está abierto
 │   │   ├── EspaciadoVisual         Factor de interlineado compartido por los textos
 │   │   └── InterlineadoConvertidor Calcula el alto de línea según ese factor
-│   ├── Temas/               Claro.xaml, Oscuro.xaml, AltoContraste.xaml, Estilos.xaml
+│   ├── Temas/               Claro.xaml, AltoContraste.xaml, Estilos.xaml
 │   └── Recursos/            sereno.ico, Fuentes/ (Atkinson Hyperlegible, licencia OFL)
 │
 └── tests/Sereno.Tests/      net8.0-windows · xUnit
@@ -308,7 +308,7 @@ Para empezar de cero a mano, cerrá Sereno y borrá la carpeta `%APPDATA%\Sereno
 
 | Criterio | Cómo se aplica |
 |---|---|
-| Contraste | Texto de al menos 4.5:1 en tema claro y oscuro; tema de alto contraste con al menos 7:1. |
+| Contraste | Texto de al menos 4.5:1 en el tema claro; tema de alto contraste con al menos 7:1. |
 | Tamaño de los controles | Botones, casillas y áreas clicables miden al menos 44 × 44 px. |
 | Color | Los errores combinan ícono, texto y borde. El medidor de fuerza dice "débil", "aceptable" o "fuerte". |
 | Teclado | Las pantallas se operan con Tab, Enter y la barra espaciadora, con foco visible. El aviso, que no toma foco a propósito, se opera con Ctrl+Alt+P / Ctrl+Alt+D. |

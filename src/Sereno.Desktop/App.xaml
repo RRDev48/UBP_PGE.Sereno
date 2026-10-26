@@ -5,7 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- El primer diccionario se reemplaza por Oscuro.xaml si Windows usa tema oscuro. -->
+                <!-- El primer diccionario se reemplaza por AltoContraste.xaml si esa preferencia está activa. -->
                 <ResourceDictionary Source="Temas/Claro.xaml"/>
                 <ResourceDictionary Source="Temas/Estilos.xaml"/>
             </ResourceDictionary.MergedDictionaries>
