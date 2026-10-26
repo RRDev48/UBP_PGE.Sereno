@@ -39,9 +39,11 @@ namespace Sereno.Tests.History
 
             historial.RegistrarAviso(AccionAviso.Pospuesto, 25);
             historial.RegistrarAviso(AccionAviso.Descartado, 25);
+            historial.RegistrarAviso(AccionAviso.PausaIniciada, 25);
 
             Assert.Equal(1, historial.Contar(TipoEntrada.AvisoPospuesto));
             Assert.Equal(1, historial.Contar(TipoEntrada.AvisoDescartado));
+            Assert.Equal(1, historial.Contar(TipoEntrada.AvisoPausaIniciada));
         }
 
         [Fact]

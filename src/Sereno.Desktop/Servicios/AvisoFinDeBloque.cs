@@ -14,11 +14,15 @@ namespace Sereno.Desktop.Servicios
     /// <summary>
     /// Avisa al terminar un bloque por el canal elegido en la configuración y registra lo que la
     /// persona hace con el aviso. El canal visual espera si hay pantalla completa o presentación
-    /// (riesgo R3) y desiste a los 5 minutos. Posponer lo vuelve a mostrar a los 5 minutos.
-    /// La voz se usa solo si el canal la incluye y hay una voz en español; descartar la corta.
+    /// (riesgo R3) y desiste a los 5 minutos. Posponer lo vuelve a mostrar a los 5 minutos. Empezar
+    /// pausa dispara <see cref="PausaSolicitada"/> para que la aplicación abra el catálogo de pausas.
+    /// La voz se usa solo si el canal la incluye y hay una voz en español; descartar o empezar la
+    /// pausa la cortan.
     /// </summary>
     public sealed class AvisoFinDeBloque
     {
+        public event EventHandler? PausaSolicitada;
+
         private static readonly TimeSpan Reintento = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan Plazo = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan EsperaPosponer = TimeSpan.FromMinutes(5);
@@ -118,13 +122,21 @@ namespace Sereno.Desktop.Servicios
         private void Resolver(AccionAviso accion)
         {
             _historial.RegistrarAviso(accion, _minutos);
-            if (accion == AccionAviso.Descartado)
+            switch (accion)
             {
-                _lector.Callar();
-                _vozModerna.Callar();
+                case AccionAviso.Descartado:
+                    _lector.Callar();
+                    _vozModerna.Callar();
+                    break;
+                case AccionAviso.PausaIniciada:
+                    _lector.Callar();
+                    _vozModerna.Callar();
+                    PausaSolicitada?.Invoke(this, EventArgs.Empty);
+                    break;
+                default:
+                    _posponer.Start();
+                    break;
             }
-            else
-                _posponer.Start();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Sereno.Core.History
     {
         Pospuesto,
         Descartado,
+        PausaIniciada,
     }
 
     public enum TipoEntrada
@@ -15,6 +16,7 @@ namespace Sereno.Core.History
         PausaTomada,
         AvisoPospuesto,
         AvisoDescartado,
+        AvisoPausaIniciada,
     }
 
     public sealed record EntradaSesion(TipoEntrada Tipo, int Minutos);
@@ -32,9 +34,12 @@ namespace Sereno.Core.History
 
         public void Registrar(TipoEntrada tipo, int minutos) => _pila.Apilar(new EntradaSesion(tipo, minutos));
 
-        public void RegistrarAviso(AccionAviso accion, int minutosBloque) => Registrar(
-            accion == AccionAviso.Pospuesto ? TipoEntrada.AvisoPospuesto : TipoEntrada.AvisoDescartado,
-            minutosBloque);
+        public void RegistrarAviso(AccionAviso accion, int minutosBloque) => Registrar(accion switch
+        {
+            AccionAviso.Pospuesto => TipoEntrada.AvisoPospuesto,
+            AccionAviso.PausaIniciada => TipoEntrada.AvisoPausaIniciada,
+            _ => TipoEntrada.AvisoDescartado,
+        }, minutosBloque);
 
         public bool DeshacerUltima() => _pila.Desapilar(out _);
 
