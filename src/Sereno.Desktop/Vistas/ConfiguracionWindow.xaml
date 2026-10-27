@@ -115,7 +115,7 @@
                     IsDefault="True" Margin="0,8,0,0" Click="Guardar_Click"/>
 
             <StackPanel Margin="0,12,0,0">
-                <Button Style="{StaticResource BotonEnlace}" Content="Cancelar"
+                <Button Style="{StaticResource BotonSecundario}" Content="Cancelar"
                         IsCancel="True" Click="Cancelar_Click"/>
             </StackPanel>
         </StackPanel>
