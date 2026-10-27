@@ -36,6 +36,7 @@ namespace Sereno.Desktop
         private MotorDeBloques _motor = null!;
         private AvisoFinDeBloque _aviso = null!;
         private RecordatorioMascota _recordatorio = null!;
+        private DetectorDistraccion _detectorDistraccion = null!;
         private readonly SessionHistory _historial = new();
         private LectorVoz _lector = null!;
         private VozModerna _vozModerna = null!;
@@ -67,6 +68,8 @@ namespace Sereno.Desktop
             _motor.EstadoCambio += (_, _) => _bandeja.ActualizarEstado(_motor.Estado, _motor.MinutosRestantes);
             _recordatorio = new RecordatorioMascota(_motor);
             _recordatorio.Recordatorio += (_, minutos) => MostrarRecordatorio(minutos);
+            _detectorDistraccion = new DetectorDistraccion(_motor, () => _almacen.ObtenerPreferenciasAviso().AvisarDistraccion);
+            _detectorDistraccion.Distraccion += (_, minutos) => MostrarRecordatorio(minutos);
             _bandeja.PausaSolicitada += (_, _) => MostrarPausa();
             _bandeja.ResumenSolicitado += (_, _) => Mostrar(new ResumenWindow(_historial));
             _lector = new LectorVoz();
@@ -93,6 +96,7 @@ namespace Sereno.Desktop
             _lector?.Dispose();
             _vozModerna?.Dispose();
             _motor?.Dispose();
+            _detectorDistraccion?.Dispose();
             _bandeja?.Dispose();
             _instanciaUnica?.Dispose();
             base.OnExit(e);

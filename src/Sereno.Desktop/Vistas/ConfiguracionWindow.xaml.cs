@@ -51,6 +51,7 @@ namespace Sereno.Desktop.Vistas
                 _ => CanalVisual,
             }).IsChecked = true;
             BajoEstimulo.IsChecked = aviso.BajoEstimulo;
+            AvisarDistraccion.IsChecked = aviso.AvisarDistraccion;
             PopularVoces(aviso.VozId);
             SegundosVisible.SelectedIndex = aviso.SegundosVisible switch
             {
@@ -100,6 +101,7 @@ namespace Sereno.Desktop.Vistas
                     ? segundos
                     : 10,
                 VozId = Voz.SelectedItem is ComboBoxItem { Tag: string vozId } ? vozId : string.Empty,
+                AvisarDistraccion = AvisarDistraccion.IsChecked == true,
             };
 
             try

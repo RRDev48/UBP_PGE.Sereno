@@ -233,6 +233,17 @@ también cambia de tono según la hora real: más pálido de día, más cálido 
 Todas sus animaciones respetan el mismo `animar` que el resto de la app: quieta con bajo estímulo,
 alto contraste o animaciones de Windows desactivadas.
 
+### Avisar si abro un navegador o Steam (opcional)
+
+Apagado por defecto. Con la casilla activa en Configuración, `DetectorDistraccion` detecta con
+`SetWinEventHook` (`EVENT_SYSTEM_FOREGROUND`, sin sondeo) cuándo la ventana activa pasa a ser un
+navegador conocido (Chrome, Edge, Firefox, Opera, Brave, Vivaldi) o Steam mientras un bloque está
+en curso, y dispara el mismo `RecordatorioWindow` que el aviso de cada 5 minutos, con un
+enfriamiento de 3 minutos entre avisos. No cierra, minimiza ni bloquea nada, y no guarda ni envía a
+ningún lado qué programa se usó — es un aviso, no un bloqueador, coherente con el resto de la app.
+Detectar juegos en general (más allá de Steam) no se implementó: no hay forma confiable de
+reconocerlos sin una lista mantenida a mano o falsos positivos constantes.
+
 ## Pausas
 
 `BreakCatalog` (Core.Breaks) tiene seis micropausas fijas, con nombre, ícono, duración y

@@ -25,6 +25,12 @@ namespace Sereno.Core.Modelos
         /// </summary>
         public string VozId { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Si está activo, avisa (sin cerrar nada) cuando la ventana activa pasa a ser un navegador
+        /// mientras un bloque está en curso. Apagado por defecto.
+        /// </summary>
+        public bool AvisarDistraccion { get; set; }
+
         public static bool EsSegundosValido(int segundos) => segundos is >= 10 and <= 60;
     }
 }

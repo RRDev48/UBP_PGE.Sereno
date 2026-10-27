@@ -48,6 +48,11 @@
                         <ComboBoxItem Content="45 segundos" Tag="45"/>
                         <ComboBoxItem Content="60 segundos" Tag="60"/>
                     </ComboBox>
+                    <CheckBox x:Name="AvisarDistraccion" Margin="0,16,0,2">
+                        <TextBlock Text="Avisar si abro un navegador o Steam durante el bloque" TextWrapping="Wrap"/>
+                    </CheckBox>
+                    <TextBlock Style="{StaticResource Ayuda}" Margin="0,0,0,0" TextWrapping="Wrap"
+                               Text="Solo avisa; no cierra ni bloquea nada. No se guarda ni se envía a ningún lado qué programa usaste."/>
                 </StackPanel>
             </Border>
 

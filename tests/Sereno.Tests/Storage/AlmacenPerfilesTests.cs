@@ -241,6 +241,17 @@ namespace Sereno.Tests.Storage
         }
 
         [Fact]
+        public void GuardarPreferenciasAviso_AvisarDistraccionSeConservaAlReabrir()
+        {
+            _almacen.GuardarPreferenciasAviso(new PreferenciasAviso { AvisarDistraccion = true });
+
+            var recargado = new AlmacenPerfiles(_carpetaTemporal);
+            recargado.Cargar();
+
+            Assert.True(recargado.ObtenerPreferenciasAviso().AvisarDistraccion);
+        }
+
+        [Fact]
         public void RenombrarPerfil_CambiaElNombreYPersisteTrasRecargar()
         {
             var (perfil, _) = _almacen.Crear("Lucía", "contrasena123");
