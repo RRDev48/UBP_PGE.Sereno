@@ -7,11 +7,23 @@ using System.Windows.Shapes;
 
 namespace Sereno.Desktop.Controles
 {
+    public enum ReaccionMascota
+    {
+        /// <summary>Volvemos a verla en un rato: se atenúa, no desaparece de golpe.</summary>
+        Pospuesta,
+
+        /// <summary>Se cierra: se achica rápido, como apagándose.</summary>
+        Descartada,
+
+        /// <summary>Arranca la pausa: un pulso breve hacia arriba.</summary>
+        PausaIniciada,
+    }
+
     /// <summary>
-    /// Destello: la mascota que recuerda cuánto falta para terminar el bloque. Una chispa simple,
-    /// no un personaje con cara, en la línea de los indicadores de otros asistentes. Con Animar en
-    /// true respira suavemente; en false (bajo estímulo, animaciones de Windows desactivadas o
-    /// alto contraste) queda quieta.
+    /// Lucero: la chispa que acompaña los avisos de Sereno. No es un personaje con cara, en la
+    /// línea de los indicadores de otros asistentes. El halo cambia de tono según la hora del día
+    /// (más pálido de día, más cálido de noche) y respira suavemente con Animar en true; en false
+    /// (bajo estímulo, animaciones de Windows desactivadas o alto contraste) queda quieta.
     /// </summary>
     public sealed class Mascota : Canvas
     {
@@ -25,7 +37,8 @@ namespace Sereno.Desktop.Controles
 
             var halo = new Ellipse { Width = 48, Height = 48 };
             var brillo = new RadialGradientBrush();
-            brillo.GradientStops.Add(new GradientStop(Color.FromArgb(120, 240, 184, 90), 0));
+            Color tono = ColorDelHalo(DateTime.Now.TimeOfDay);
+            brillo.GradientStops.Add(new GradientStop(Color.FromArgb(120, tono.R, tono.G, tono.B), 0));
             brillo.GradientStops.Add(new GradientStop(Colors.Transparent, 1));
             halo.Fill = brillo;
             SetLeft(halo, 0);
@@ -66,5 +79,42 @@ namespace Sereno.Desktop.Controles
                 _escala.BeginAnimation(ScaleTransform.ScaleYProperty, pulso);
             }
         }
+
+        /// <summary>Reacción breve antes de cerrarse. Llamar solo cuando hay animaciones activas.</summary>
+        public void Reaccionar(ReaccionMascota reaccion)
+        {
+            var duracion = TimeSpan.FromMilliseconds(200);
+            switch (reaccion)
+            {
+                case ReaccionMascota.Pospuesta:
+                    _chispa.BeginAnimation(OpacityProperty, new DoubleAnimation(0.5, duracion));
+                    break;
+                case ReaccionMascota.Descartada:
+                    _escala.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(0.55, duracion));
+                    _escala.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(0.55, duracion));
+                    break;
+                case ReaccionMascota.PausaIniciada:
+                    _escala.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1.3, duracion));
+                    _escala.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1.3, duracion));
+                    break;
+            }
+        }
+
+        /// <summary>Más pálida al mediodía, más cálida a medianoche; transición continua entre las dos.</summary>
+        private static Color ColorDelHalo(TimeSpan horaDelDia)
+        {
+            double angulo = horaDelDia.TotalHours / 24.0 * 2 * Math.PI;
+            double calidez = (1 + Math.Cos(angulo)) / 2; // 1 a medianoche, 0 al mediodía
+
+            var dia = Color.FromRgb(0xF3, 0xDC, 0xAE);
+            var noche = Color.FromRgb(0xF0, 0xB8, 0x5A);
+            return Color.FromRgb(
+                Interpolar(dia.R, noche.R, calidez),
+                Interpolar(dia.G, noche.G, calidez),
+                Interpolar(dia.B, noche.B, calidez));
+        }
+
+        private static byte Interpolar(byte desde, byte hasta, double t) =>
+            (byte)(desde + (hasta - desde) * t);
     }
 }

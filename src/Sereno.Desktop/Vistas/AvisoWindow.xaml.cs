@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Sereno.Core.History;
+using Sereno.Desktop.Controles;
 using Sereno.Desktop.Servicios;
 
 namespace Sereno.Desktop.Vistas
@@ -33,6 +34,7 @@ namespace Sereno.Desktop.Vistas
 
             TituloTexto.Text = "Bloque terminado";
             CuerpoTexto.Text = $"Tomá una pausa. Completaste {minutos} minutos de foco.";
+            MascotaIcono.Animar = animar;
             VentanaFlotante.Aplicar(this);
             _ = new AtajosGlobales(
                 this,
@@ -72,8 +74,17 @@ namespace Sereno.Desktop.Vistas
             _resuelto = true;
             _cierreAutomatico.Stop();
             _alAccion(accion);
+
+            if (_animar) MascotaIcono.Reaccionar(ReaccionPara(accion));
             CerrarConFundido();
         }
+
+        private static ReaccionMascota ReaccionPara(AccionAviso accion) => accion switch
+        {
+            AccionAviso.Pospuesto => ReaccionMascota.Pospuesta,
+            AccionAviso.PausaIniciada => ReaccionMascota.PausaIniciada,
+            _ => ReaccionMascota.Descartada,
+        };
 
         private void CerrarConFundido()
         {

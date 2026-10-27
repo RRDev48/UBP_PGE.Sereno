@@ -189,8 +189,9 @@ namespace Sereno.Desktop
             _bandeja.Mostrar(perfil);
             _motor.Iniciar(_almacen.ObtenerDuraciones().MinutosBloque);
             CerrarVentanaActual();
+            bool animar = TemaService.AnimacionesActivas && !_almacen.ObtenerPreferenciasAviso().BajoEstimulo;
             new AvisoBreveWindow("Sereno está activo",
-                "Queda en la bandeja del sistema. Hacé clic derecho en el ícono para ver las opciones.").Show();
+                "Queda en la bandeja del sistema. Hacé clic derecho en el ícono para ver las opciones.", animar).Show();
 
             // Acá se conecta el resto de Sereno (temporizador de pausas, historial del perfil).
         }

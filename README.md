@@ -215,6 +215,24 @@ que los lectores de pantalla lo anuncien igual, `Accesibilidad.Anunciar` dispara
 `AutomationPeer.RaiseNotificationEvent`, que no depende del foco (a diferencia del evento de región
 activa tradicional).
 
+### Lucero
+
+Lucero es la chispa (`Controles/Mascota.cs`) que acompaña los avisos flotantes: una sola forma de
+cuatro puntas con un halo, sin cara ni nombre de personaje infantil, en la línea de los indicadores
+de otros asistentes. Respira suavemente mientras un aviso está visible y reacciona apenas antes de
+cerrarse (se atenúa al posponer, se achica rápido al descartar, un pulso breve al empezar la
+pausa) — nunca con caritas felices o tristes, para no calificar la elección de la persona. El halo
+también cambia de tono según la hora real: más pálido de día, más cálido de noche. Aparece en:
+
+- `RecordatorioWindow`, cada 5 minutos mientras un bloque está en curso (`RecordatorioMascota`
+  escucha `MotorDeBloques.EstadoCambio` y avisa en los múltiplos de 5, nunca apenas arranca el
+  bloque).
+- `AvisoWindow`, el aviso de fin de bloque.
+- `AvisoBreveWindow`, la confirmación de que la sesión quedó activa en la bandeja.
+
+Todas sus animaciones respetan el mismo `animar` que el resto de la app: quieta con bajo estímulo,
+alto contraste o animaciones de Windows desactivadas.
+
 ## Pausas
 
 `BreakCatalog` (Core.Breaks) tiene seis micropausas fijas, con nombre, ícono, duración y
