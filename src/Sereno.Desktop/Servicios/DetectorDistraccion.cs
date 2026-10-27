@@ -6,10 +6,11 @@ using Sereno.Core.Timing;
 namespace Sereno.Desktop.Servicios
 {
     /// <summary>
-    /// Mientras un bloque está en curso, avisa si la ventana activa pasa a ser un navegador o Steam.
-    /// No cierra ni minimiza nada, no guarda qué programa se usó: solo dispara Distraccion para que
-    /// se muestre un recordatorio, igual que el de cada 5 minutos. Detecta el cambio de primer plano
-    /// con SetWinEventHook, sin sondear.
+    /// Mientras un bloque está en curso, avisa si la ventana activa es (o pasa a ser) un navegador
+    /// o Steam. No cierra ni minimiza nada, no guarda qué programa se usó: solo dispara Distraccion
+    /// para que se muestre un recordatorio, igual que el de cada 5 minutos. Detecta los cambios de
+    /// primer plano con SetWinEventHook, sin sondear, y además revisa la ventana activa apenas
+    /// arranca el bloque, para el caso de que ya estuviera abierta de antes.
     /// </summary>
     public sealed class DetectorDistraccion : IDisposable
     {
@@ -25,13 +26,16 @@ namespace Sereno.Desktop.Servicios
         private readonly WinEventDelegate _callback;
         private readonly IntPtr _hook;
         private DateTime _ultimoAviso = DateTime.MinValue;
+        private bool _chequeInicialHecho;
 
-        /// <param name="habilitado">Se consulta en cada cambio de ventana: la preferencia puede cambiarse en Configuración.</param>
+        /// <param name="habilitado">Se consulta en cada chequeo: la preferencia puede cambiarse en Configuración.</param>
         public DetectorDistraccion(MotorDeBloques motor, Func<bool> habilitado)
         {
             _motor = motor;
             _habilitado = habilitado;
-            _callback = AlCambiarPrimerPlano;
+            _motor.EstadoCambio += (_, _) => AlCambiarEstadoDelBloque();
+
+            _callback = (_, _, hwnd, _, _, _, _) => Verificar(hwnd);
             _hook = SetWinEventHook(EventSystemForeground, EventSystemForeground, IntPtr.Zero,
                 _callback, 0, 0, WineventOutofcontext);
         }
@@ -44,8 +48,20 @@ namespace Sereno.Desktop.Servicios
             if (_hook != IntPtr.Zero) UnhookWinEvent(_hook);
         }
 
-        private void AlCambiarPrimerPlano(IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
-            int idObject, int idChild, uint eventThread, uint eventTime)
+        private void AlCambiarEstadoDelBloque()
+        {
+            if (_motor.Estado != BlockState.EnCurso)
+            {
+                _chequeInicialHecho = false;
+                return;
+            }
+
+            if (_chequeInicialHecho) return;
+            _chequeInicialHecho = true;
+            Verificar(GetForegroundWindow());
+        }
+
+        private void Verificar(IntPtr hwnd)
         {
             if (_motor.Estado != BlockState.EnCurso || !_habilitado()) return;
             if (hwnd == IntPtr.Zero) return;
@@ -88,5 +104,8 @@ namespace Sereno.Desktop.Servicios
 
         [DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
     }
 }
